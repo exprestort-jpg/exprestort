@@ -323,16 +323,24 @@
 }
 
 @media (min-width: 768px) {
+  /*
+   * Desktop: the hero becomes a contained card. Full-bleed made the photo
+   * drift off the right edge on wide monitors, so the box is capped at the
+   * same width as every other section.
+   */
   .hero {
-    min-height: 520px;
+    min-height: 460px;
     align-items: center;
+    max-width: min(var(--content-max), 100% - var(--gutter) * 2);
+    margin: var(--s-24) auto 0;
+    border-radius: var(--r-md);
   }
 
   .heroContent {
-    max-width: var(--content-max);
+    /* Half the card, so the copy never runs over the photo. */
+    max-width: 52%;
     width: 100%;
-    margin: 0 auto;
-    padding: var(--s-48) var(--gutter);
+    padding: var(--s-48);
   }
 
   .heroTitle {
@@ -347,8 +355,8 @@
   .heroScript {
     font-size: 28px;
     max-width: 220px;
-    right: 6vw;
-    top: 8vh;
+    right: var(--s-48);
+    top: var(--s-32);
   }
 
   .section,
@@ -370,6 +378,25 @@
 
   .sectionTitle {
     font-size: 30px;
+  }
+
+  .trustItem {
+    gap: var(--s-12);
+  }
+
+  .trustIcon {
+    width: 64px;
+    height: 64px;
+  }
+
+  /* The glyph ships a fixed width/height attribute; CSS overrides it. */
+  .trustIcon svg {
+    width: 28px;
+    height: 28px;
+  }
+
+  .trustLabel {
+    font-size: 13px;
   }
 
   .reviewsSection {

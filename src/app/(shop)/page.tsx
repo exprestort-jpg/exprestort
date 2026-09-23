@@ -53,7 +53,7 @@ export default async function HomePage() {
             alt=""
             fill
             priority
-            sizes="100vw"
+            sizes="(min-width: 1232px) 1200px, 100vw"
             className={styles.heroImage}
           />
         ) : null}
