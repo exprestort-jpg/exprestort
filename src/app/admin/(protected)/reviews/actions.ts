@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { db } from "@/db";
 import { reviews } from "@/db/schema";
+import { deleteBlobs } from "@/lib/blob";
 import { type FormState, num, str, toFieldErrors } from "@/lib/form";
 import { assertAdmin } from "@/lib/require-admin";
 
@@ -48,10 +49,24 @@ export async function saveReview(
     sort: parsed.data.sort,
   };
 
+  const previousAvatarUrl = id
+    ? (
+        await db
+          .select({ avatarUrl: reviews.avatarUrl })
+          .from(reviews)
+          .where(eq(reviews.id, id))
+          .limit(1)
+      )[0]?.avatarUrl
+    : null;
+
   if (id) {
     await db.update(reviews).set(values).where(eq(reviews.id, id));
   } else {
     await db.insert(reviews).values(values);
+  }
+
+  if (previousAvatarUrl && previousAvatarUrl !== values.avatarUrl) {
+    await deleteBlobs([previousAvatarUrl]);
   }
 
   updateTag("reviews");
@@ -64,7 +79,14 @@ export async function deleteReview(formData: FormData): Promise<void> {
   const id = Number(str(formData, "id"));
   if (!id) return;
 
+  const [existing] = await db
+    .select({ avatarUrl: reviews.avatarUrl })
+    .from(reviews)
+    .where(eq(reviews.id, id))
+    .limit(1);
+
   await db.delete(reviews).where(eq(reviews.id, id));
+  await deleteBlobs([existing?.avatarUrl]);
 
   updateTag("reviews");
   redirect("/admin/reviews");

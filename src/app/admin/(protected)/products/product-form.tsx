@@ -6,6 +6,10 @@ import type { FormState } from "@/lib/form";
 import { slugify } from "@/lib/slug";
 import styles from "../_components/admin.module.css";
 import { FormSection } from "../_components/form-section";
+import {
+  type GalleryImage,
+  ImageGalleryField,
+} from "../_components/image-gallery-field";
 import { saveProduct } from "./actions";
 
 export type VariantValues = {
@@ -30,6 +34,7 @@ export type ProductFormValues = {
   seoDescription: string;
   variants: VariantValues[];
   sections: SectionValues[];
+  images: GalleryImage[];
 };
 
 const initialState: FormState = {};
@@ -48,6 +53,7 @@ export const emptyProduct: ProductFormValues = {
   seoDescription: "",
   variants: [{ label: "", weightLabel: "", price: "" }],
   sections: [],
+  images: [],
 };
 
 /** Suggestions only — the field stays free text so the client isn't boxed in. */
@@ -192,6 +198,13 @@ export function ProductForm({
           defaultValue={values.description}
         />
       </div>
+
+      <FormSection
+        title="Фото товару"
+        hint="Перше фото стає головним на картці товару."
+      >
+        <ImageGalleryField defaultValue={values.images} />
+      </FormSection>
 
       <FormSection title="Розміри та ціни">
         {variants.map((variant, index) => (

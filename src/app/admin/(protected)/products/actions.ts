@@ -5,7 +5,13 @@ import { updateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { db, withTransaction } from "@/db";
-import { productSections, products, productVariants } from "@/db/schema";
+import {
+  productImages,
+  productSections,
+  products,
+  productVariants,
+} from "@/db/schema";
+import { deleteBlobs } from "@/lib/blob";
 import {
   bool,
   type FormState,
@@ -105,6 +111,14 @@ export async function saveProduct(
     });
   }
 
+  const images = collectRows(formData, "image", ["url", "alt"])
+    .filter((row) => row.url)
+    .map((row, index) => ({
+      url: row.url as string,
+      alt: row.alt || null,
+      sort: index + 1,
+    }));
+
   const sections = collectRows(formData, "section", ["title", "body"])
     .filter((row) => row.title || row.body)
     .map((row, index) => ({
@@ -157,6 +171,17 @@ export async function saveProduct(
     updatedAt: new Date(),
   };
 
+  // Read the current gallery first: whatever the admin dropped has to be
+  // deleted from Blob storage after the save succeeds.
+  const previousImageUrls = id
+    ? (
+        await db
+          .select({ url: productImages.url })
+          .from(productImages)
+          .where(eq(productImages.productId, id))
+      ).map((row) => row.url)
+    : [];
+
   try {
     await withTransaction(async (tx) => {
       let productId = id;
@@ -171,6 +196,9 @@ export async function saveProduct(
         await tx
           .delete(productSections)
           .where(eq(productSections.productId, productId));
+        await tx
+          .delete(productImages)
+          .where(eq(productImages.productId, productId));
       } else {
         const [inserted] = await tx
           .insert(products)
@@ -199,6 +227,17 @@ export async function saveProduct(
           })),
         );
       }
+
+      if (images.length > 0) {
+        await tx.insert(productImages).values(
+          images.map((image) => ({
+            productId,
+            url: image.url,
+            alt: image.alt,
+            sort: image.sort,
+          })),
+        );
+      }
     });
   } catch (error) {
     if (isUniqueViolation(error)) {
@@ -206,6 +245,9 @@ export async function saveProduct(
     }
     throw error;
   }
+
+  const keptUrls = new Set(images.map((image) => image.url));
+  await deleteBlobs(previousImageUrls.filter((url) => !keptUrls.has(url)));
 
   updateTag("products");
   redirect("/admin/products");
@@ -217,8 +259,17 @@ export async function deleteProduct(formData: FormData): Promise<void> {
   const id = Number(str(formData, "id"));
   if (!id) return;
 
-  // Variants and sections cascade; order_items keep their snapshots and null out.
+  // Variants, sections and image rows cascade; order_items keep their snapshots
+  // and null out. The files in Blob storage have to be removed explicitly.
+  const urls = (
+    await db
+      .select({ url: productImages.url })
+      .from(productImages)
+      .where(eq(productImages.productId, id))
+  ).map((row) => row.url);
+
   await db.delete(products).where(eq(products.id, id));
+  await deleteBlobs(urls);
 
   updateTag("products");
   redirect("/admin/products");

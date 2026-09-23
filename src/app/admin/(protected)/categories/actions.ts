@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { db } from "@/db";
 import { categories } from "@/db/schema";
+import { deleteBlobs } from "@/lib/blob";
 import {
   bool,
   type FormState,
@@ -69,6 +70,17 @@ export async function saveCategory(
     updatedAt: new Date(),
   };
 
+  // Kept so a replaced photo can be removed from Blob storage afterwards.
+  const previousImageUrl = id
+    ? (
+        await db
+          .select({ imageUrl: categories.imageUrl })
+          .from(categories)
+          .where(eq(categories.id, id))
+          .limit(1)
+      )[0]?.imageUrl
+    : null;
+
   try {
     if (id) {
       await db.update(categories).set(values).where(eq(categories.id, id));
@@ -80,6 +92,10 @@ export async function saveCategory(
       return { fieldErrors: { slug: "Така адреса вже зайнята" } };
     }
     throw error;
+  }
+
+  if (previousImageUrl && previousImageUrl !== values.imageUrl) {
+    await deleteBlobs([previousImageUrl]);
   }
 
   // updateTag so the admin sees its own write immediately; the storefront picks
@@ -94,6 +110,12 @@ export async function deleteCategory(formData: FormData): Promise<void> {
   const id = Number(str(formData, "id"));
   if (!id) return;
 
+  const [existing] = await db
+    .select({ imageUrl: categories.imageUrl })
+    .from(categories)
+    .where(eq(categories.id, id))
+    .limit(1);
+
   try {
     await db.delete(categories).where(eq(categories.id, id));
   } catch (error) {
@@ -102,6 +124,8 @@ export async function deleteCategory(formData: FormData): Promise<void> {
     }
     throw error;
   }
+
+  await deleteBlobs([existing?.imageUrl]);
 
   updateTag("categories");
   redirect("/admin/categories");

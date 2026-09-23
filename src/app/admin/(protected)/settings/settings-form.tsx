@@ -4,6 +4,7 @@ import { useActionState } from "react";
 import type { FormState } from "@/lib/form";
 import styles from "../_components/admin.module.css";
 import { FormSection } from "../_components/form-section";
+import { ImageField } from "../_components/image-field";
 import { saveSettings } from "./actions";
 
 export type SettingsValues = {
@@ -125,12 +126,9 @@ export function SettingsForm({ values }: { values: SettingsValues }) {
             <label className={styles.label} htmlFor="heroImageUrl">
               Фото банера
             </label>
-            <input
-              id="heroImageUrl"
+            <ImageField
               name="heroImageUrl"
-              className={styles.input}
               defaultValue={values.heroImageUrl}
-              placeholder="https://…"
             />
             {errors.heroImageUrl ? (
               <span className={styles.fieldError}>{errors.heroImageUrl}</span>
@@ -168,12 +166,9 @@ export function SettingsForm({ values }: { values: SettingsValues }) {
           <label className={styles.label} htmlFor="aboutImageUrl">
             Фото
           </label>
-          <input
-            id="aboutImageUrl"
+          <ImageField
             name="aboutImageUrl"
-            className={styles.input}
             defaultValue={values.aboutImageUrl}
-            placeholder="https://…"
           />
           {errors.aboutImageUrl ? (
             <span className={styles.fieldError}>{errors.aboutImageUrl}</span>

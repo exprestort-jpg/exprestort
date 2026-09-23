@@ -5,6 +5,7 @@ import { useActionState, useState } from "react";
 import type { FormState } from "@/lib/form";
 import { slugify } from "@/lib/slug";
 import styles from "../_components/admin.module.css";
+import { ImageField } from "../_components/image-field";
 import { saveCategory } from "./actions";
 
 export type CategoryFormValues = {
@@ -104,16 +105,7 @@ export function CategoryForm({ values }: { values: CategoryFormValues }) {
         <label className={styles.label} htmlFor="imageUrl">
           Фото категорії
         </label>
-        <input
-          id="imageUrl"
-          name="imageUrl"
-          className={styles.input}
-          defaultValue={values.imageUrl}
-          placeholder="https://…"
-        />
-        <span className={styles.hint}>
-          Поки що посилання. Завантаження файлів — наступний крок.
-        </span>
+        <ImageField name="imageUrl" defaultValue={values.imageUrl} />
         {errors.imageUrl ? (
           <span className={styles.fieldError}>{errors.imageUrl}</span>
         ) : null}

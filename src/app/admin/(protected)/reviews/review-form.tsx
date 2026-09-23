@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useActionState } from "react";
 import type { FormState } from "@/lib/form";
 import styles from "../_components/admin.module.css";
+import { ImageField } from "../_components/image-field";
 import { saveReview } from "./actions";
 
 export type ReviewFormValues = {
@@ -90,14 +91,11 @@ export function ReviewForm({ values }: { values: ReviewFormValues }) {
           <label className={styles.label} htmlFor="avatarUrl">
             Фото автора
           </label>
-          <input
-            id="avatarUrl"
+          <ImageField
             name="avatarUrl"
-            className={styles.input}
             defaultValue={values.avatarUrl}
-            placeholder="https://…"
+            hint="Необов'язково."
           />
-          <span className={styles.hint}>Необов&apos;язково.</span>
           {errors.avatarUrl ? (
             <span className={styles.fieldError}>{errors.avatarUrl}</span>
           ) : null}

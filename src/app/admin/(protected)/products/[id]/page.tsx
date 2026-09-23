@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { db } from "@/db";
 import {
   categories,
+  productImages,
   productSections,
   products,
   productVariants,
@@ -28,7 +29,7 @@ export default async function EditProductPage({
     .limit(1);
   if (!product) notFound();
 
-  const [variants, sections, categoryOptions] = await Promise.all([
+  const [variants, sections, images, categoryOptions] = await Promise.all([
     db
       .select()
       .from(productVariants)
@@ -39,6 +40,11 @@ export default async function EditProductPage({
       .from(productSections)
       .where(eq(productSections.productId, productId))
       .orderBy(asc(productSections.sort)),
+    db
+      .select()
+      .from(productImages)
+      .where(eq(productImages.productId, productId))
+      .orderBy(asc(productImages.sort)),
     db
       .select({ id: categories.id, title: categories.title })
       .from(categories)
@@ -73,6 +79,10 @@ export default async function EditProductPage({
           sections: sections.map((section) => ({
             title: section.title,
             body: section.body,
+          })),
+          images: images.map((image) => ({
+            url: image.url,
+            alt: image.alt ?? "",
           })),
         }}
       />
