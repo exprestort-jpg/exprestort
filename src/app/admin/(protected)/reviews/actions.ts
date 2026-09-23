@@ -1,0 +1,71 @@
+"use server";
+
+import { eq } from "drizzle-orm";
+import { updateTag } from "next/cache";
+import { redirect } from "next/navigation";
+import { z } from "zod";
+import { db } from "@/db";
+import { reviews } from "@/db/schema";
+import { type FormState, num, str, toFieldErrors } from "@/lib/form";
+import { assertAdmin } from "@/lib/require-admin";
+
+const schema = z.object({
+  author: z.string().min(2, "Вкажіть ім'я").max(80),
+  avatarUrl: z
+    .string()
+    .url("Некоректне посилання")
+    .or(z.literal(""))
+    .optional(),
+  rating: z.number().int().min(1, "Від 1 до 5").max(5, "Від 1 до 5"),
+  text: z.string().min(10, "Відгук закороткий").max(1200, "Відгук задовгий"),
+  sort: z.number().int().min(0).max(9999),
+});
+
+export async function saveReview(
+  _prev: FormState,
+  formData: FormData,
+): Promise<FormState> {
+  await assertAdmin();
+
+  const idRaw = str(formData, "id");
+  const id = idRaw ? Number(idRaw) : null;
+
+  const parsed = schema.safeParse({
+    author: str(formData, "author"),
+    avatarUrl: str(formData, "avatarUrl"),
+    rating: num(formData, "rating", 5),
+    text: str(formData, "text"),
+    sort: num(formData, "sort"),
+  });
+
+  if (!parsed.success) return toFieldErrors(parsed.error);
+
+  const values = {
+    author: parsed.data.author,
+    avatarUrl: parsed.data.avatarUrl || null,
+    rating: parsed.data.rating,
+    text: parsed.data.text,
+    sort: parsed.data.sort,
+  };
+
+  if (id) {
+    await db.update(reviews).set(values).where(eq(reviews.id, id));
+  } else {
+    await db.insert(reviews).values(values);
+  }
+
+  updateTag("reviews");
+  redirect("/admin/reviews");
+}
+
+export async function deleteReview(formData: FormData): Promise<void> {
+  await assertAdmin();
+
+  const id = Number(str(formData, "id"));
+  if (!id) return;
+
+  await db.delete(reviews).where(eq(reviews.id, id));
+
+  updateTag("reviews");
+  redirect("/admin/reviews");
+}

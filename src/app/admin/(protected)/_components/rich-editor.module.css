@@ -1,0 +1,74 @@
+.wrapper {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  overflow: hidden;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-4);
+  padding: var(--s-8);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.toolButton {
+  min-width: 34px;
+  padding: 5px 9px;
+  border: 1px solid transparent;
+  border-radius: var(--r-sm);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.toolButton:hover {
+  background: var(--surface-alt);
+}
+
+.toolButtonActive {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent-strong);
+}
+
+.content {
+  min-height: 220px;
+  padding: var(--s-16);
+  font-size: 14px;
+  line-height: 1.6;
+  outline: none;
+}
+
+.content h2 {
+  margin: var(--s-16) 0 var(--s-8);
+  font-size: 20px;
+}
+
+.content h3 {
+  margin: var(--s-12) 0 var(--s-4);
+  font-size: 17px;
+}
+
+.content p {
+  margin-bottom: var(--s-8);
+}
+
+.content ul,
+.content ol {
+  margin: 0 0 var(--s-8) var(--s-20);
+}
+
+.content blockquote {
+  margin: var(--s-12) 0;
+  padding-left: var(--s-12);
+  border-left: 3px solid var(--accent);
+  color: var(--text-secondary);
+}
+
+.loading {
+  padding: var(--s-16);
+  color: var(--text-secondary);
+  font-size: 13px;
+}

@@ -1,0 +1,130 @@
+"use client";
+
+import Link from "next/link";
+import { useActionState, useState } from "react";
+import type { FormState } from "@/lib/form";
+import { TRUST_ICONS } from "@/lib/trust-icons";
+import styles from "../_components/admin.module.css";
+import { TrustIcon } from "../_components/trust-icon";
+import { saveTrustItem } from "./actions";
+
+export type TrustFormValues = {
+  id?: number;
+  icon: string;
+  label: string;
+  scope: "main" | "category";
+  sort: number;
+};
+
+export const emptyTrustItem: TrustFormValues = {
+  icon: "croissant",
+  label: "",
+  scope: "main",
+  sort: 0,
+};
+
+const initialState: FormState = {};
+
+export function TrustForm({ values }: { values: TrustFormValues }) {
+  const [state, formAction, pending] = useActionState(
+    saveTrustItem,
+    initialState,
+  );
+  const [icon, setIcon] = useState(values.icon);
+  const errors = state.fieldErrors ?? {};
+
+  return (
+    <form action={formAction} className={styles.form}>
+      {values.id ? <input type="hidden" name="id" value={values.id} /> : null}
+
+      <div className={styles.field}>
+        <label className={styles.label} htmlFor="label">
+          Текст
+        </label>
+        <input
+          id="label"
+          name="label"
+          className={styles.input}
+          defaultValue={values.label}
+          placeholder="Випікаємо щодня"
+          required
+        />
+        {errors.label ? (
+          <span className={styles.fieldError}>{errors.label}</span>
+        ) : null}
+      </div>
+
+      <div className={styles.field}>
+        <label className={styles.label} htmlFor="icon">
+          Іконка
+        </label>
+        <div className={styles.repeaterHead}>
+          <select
+            id="icon"
+            name="icon"
+            className={styles.select}
+            value={icon}
+            onChange={(event) => setIcon(event.target.value)}
+            style={{ flex: 1 }}
+          >
+            {TRUST_ICONS.map((option) => (
+              <option key={option.name} value={option.name}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+          <span aria-hidden style={{ color: "var(--accent-strong)" }}>
+            <TrustIcon name={icon} size={28} />
+          </span>
+        </div>
+        {errors.icon ? (
+          <span className={styles.fieldError}>{errors.icon}</span>
+        ) : null}
+      </div>
+
+      <div className={styles.grid2}>
+        <div className={styles.field}>
+          <label className={styles.label} htmlFor="scope">
+            Де показувати
+          </label>
+          <select
+            id="scope"
+            name="scope"
+            className={styles.select}
+            defaultValue={values.scope}
+          >
+            <option value="main">Головна сторінка</option>
+            <option value="category">Сторінки категорій</option>
+          </select>
+        </div>
+
+        <div className={styles.field}>
+          <label className={styles.label} htmlFor="sort">
+            Порядок
+          </label>
+          <input
+            id="sort"
+            name="sort"
+            type="number"
+            min={0}
+            className={styles.input}
+            defaultValue={values.sort}
+          />
+        </div>
+      </div>
+
+      <div className={styles.formActions}>
+        <button
+          type="submit"
+          className={`${styles.button} ${styles.buttonPrimary}`}
+          disabled={pending}
+        >
+          {pending ? "Зберігаємо…" : "Зберегти"}
+        </button>
+        <Link href="/admin/trust" className={styles.button}>
+          Скасувати
+        </Link>
+      </div>
+    </form>
+  );
+}

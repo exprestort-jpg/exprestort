@@ -3,6 +3,8 @@ import type { ZodError } from "zod";
 export type FormState = {
   error?: string;
   fieldErrors?: Record<string, string>;
+  /** Set by forms that stay on the page instead of redirecting after a save. */
+  saved?: boolean;
 };
 
 /** Flattens a Zod error into one message per field, which is all the UI shows. */

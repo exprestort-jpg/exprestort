@@ -5,6 +5,7 @@ import { useActionState, useState } from "react";
 import type { FormState } from "@/lib/form";
 import { slugify } from "@/lib/slug";
 import styles from "../_components/admin.module.css";
+import { FormSection } from "../_components/form-section";
 import { saveProduct } from "./actions";
 
 export type VariantValues = {
@@ -192,11 +193,7 @@ export function ProductForm({
         />
       </div>
 
-      <fieldset className={styles.section}>
-        <div className={styles.repeaterHead}>
-          <legend className={styles.sectionTitle}>Розміри та ціни</legend>
-        </div>
-
+      <FormSection title="Розміри та ціни">
         {variants.map((variant, index) => (
           // biome-ignore lint/suspicious/noArrayIndexKey: rows have no stable id until saved
           <div key={index} className={styles.repeaterRow}>
@@ -261,18 +258,12 @@ export function ProductForm({
         >
           + Додати розмір
         </button>
-      </fieldset>
+      </FormSection>
 
-      <fieldset className={styles.section}>
-        <div className={styles.repeaterHead}>
-          <legend className={styles.sectionTitle}>
-            Розділи на сторінці товару
-          </legend>
-        </div>
-        <span className={styles.hint}>
-          Наприклад «Склад» або «Доставка та зберігання».
-        </span>
-
+      <FormSection
+        title="Розділи на сторінці товару"
+        hint="Наприклад «Склад» або «Доставка та зберігання»."
+      >
         {sections.map((section, index) => (
           // biome-ignore lint/suspicious/noArrayIndexKey: rows have no stable id until saved
           <div key={index} className={styles.repeaterStack}>
@@ -312,11 +303,9 @@ export function ProductForm({
         >
           + Додати розділ
         </button>
-      </fieldset>
+      </FormSection>
 
-      <fieldset className={styles.section}>
-        <legend className={styles.sectionTitle}>Публікація</legend>
-
+      <FormSection title="Публікація">
         <div className={styles.grid2}>
           <div className={styles.field}>
             <label className={styles.label} htmlFor="sort">
@@ -378,7 +367,7 @@ export function ProductForm({
             defaultValue={values.seoDescription}
           />
         </div>
-      </fieldset>
+      </FormSection>
 
       <div className={styles.formActions}>
         <button

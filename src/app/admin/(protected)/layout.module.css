@@ -5,9 +5,19 @@
 }
 
 .sidebar {
+  /*
+   * Pinned to the viewport rather than stretched to the content. Without this
+   * the sidebar grows as tall as the page and «Вийти» ends up below the fold on
+   * any long form. `align-self: start` stops the flex parent from stretching it.
+   */
+  position: sticky;
+  top: 0;
+  align-self: start;
   display: flex;
   flex-direction: column;
+  flex-shrink: 0;
   width: 220px;
+  height: 100dvh;
   padding: var(--s-24) var(--s-16);
   background: var(--surface);
   border-right: 1px solid var(--border);
@@ -24,6 +34,8 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
+  min-height: 0;
+  overflow-y: auto;
 }
 
 .navLink {
@@ -60,5 +72,7 @@
 
 .content {
   flex: 1;
+  /* Without this a wide table stretches the flex item instead of scrolling. */
+  min-width: 0;
   padding: var(--s-32) var(--s-24);
 }
