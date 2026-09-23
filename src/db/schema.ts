@@ -63,6 +63,8 @@ export const products = pgTable(
     description: text("description"),
     /** Free text shown on the card corner: «Хіт», «Новинка». Null = no badge. */
     badge: varchar("badge", { length: 24 }),
+    /** «Склад набору» bullet list on the product page, one item per line. */
+    setContents: text("set_contents"),
     isActive: boolean("is_active").notNull().default(true),
     /** Manual pin into «Популярне», overrides sales-based ranking. */
     isFeatured: boolean("is_featured").notNull().default(false),
@@ -176,11 +178,17 @@ export const siteSettings = pgTable("site_settings", {
     .notNull()
     .default(""),
   heroTitle: varchar("hero_title", { length: 160 }).notNull().default(""),
+  /** Second line of the hero headline, rendered in the brand orange. */
+  heroTitleAccent: varchar("hero_title_accent", { length: 160 })
+    .notNull()
+    .default(""),
   heroSubtitle: varchar("hero_subtitle", { length: 320 }).notNull().default(""),
   heroScript: varchar("hero_script", { length: 80 }).notNull().default(""),
   heroImageUrl: text("hero_image_url"),
   aboutTitle: varchar("about_title", { length: 160 }).notNull().default(""),
   aboutText: text("about_text").notNull().default(""),
+  /** Ticked bullets under the About text, one per line. */
+  aboutBullets: text("about_bullets").notNull().default(""),
   aboutImageUrl: text("about_image_url"),
   updatedAt: timestamp("updated_at", { withTimezone: true })
     .notNull()

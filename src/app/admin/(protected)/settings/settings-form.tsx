@@ -12,11 +12,13 @@ export type SettingsValues = {
   workingHours: string;
   promoStripText: string;
   heroTitle: string;
+  heroTitleAccent: string;
   heroSubtitle: string;
   heroScript: string;
   heroImageUrl: string;
   aboutTitle: string;
   aboutText: string;
+  aboutBullets: string;
   aboutImageUrl: string;
 };
 
@@ -97,6 +99,19 @@ export function SettingsForm({ values }: { values: SettingsValues }) {
         </div>
 
         <div className={styles.field}>
+          <label className={styles.label} htmlFor="heroTitleAccent">
+            Друга частина заголовка
+          </label>
+          <input
+            id="heroTitleAccent"
+            name="heroTitleAccent"
+            className={styles.input}
+            defaultValue={values.heroTitleAccent}
+          />
+          <span className={styles.hint}>Виділяється помаранчевим.</span>
+        </div>
+
+        <div className={styles.field}>
           <label className={styles.label} htmlFor="heroSubtitle">
             Підзаголовок
           </label>
@@ -160,6 +175,19 @@ export function SettingsForm({ values }: { values: SettingsValues }) {
             className={styles.textarea}
             defaultValue={values.aboutText}
           />
+        </div>
+
+        <div className={styles.field}>
+          <label className={styles.label} htmlFor="aboutBullets">
+            Список переваг
+          </label>
+          <textarea
+            id="aboutBullets"
+            name="aboutBullets"
+            className={styles.textarea}
+            defaultValue={values.aboutBullets}
+          />
+          <span className={styles.hint}>По одному пункту в рядку.</span>
         </div>
 
         <div className={styles.field}>

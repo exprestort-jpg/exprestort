@@ -32,11 +32,13 @@ export default async function SettingsPage() {
           workingHours: settings?.workingHours ?? "",
           promoStripText: settings?.promoStripText ?? "",
           heroTitle: settings?.heroTitle ?? "",
+          heroTitleAccent: settings?.heroTitleAccent ?? "",
           heroSubtitle: settings?.heroSubtitle ?? "",
           heroScript: settings?.heroScript ?? "",
           heroImageUrl: settings?.heroImageUrl ?? "",
           aboutTitle: settings?.aboutTitle ?? "",
           aboutText: settings?.aboutText ?? "",
+          aboutBullets: settings?.aboutBullets ?? "",
           aboutImageUrl: settings?.aboutImageUrl ?? "",
         }}
       />

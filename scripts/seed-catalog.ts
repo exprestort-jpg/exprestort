@@ -56,6 +56,8 @@ const PRODUCTS = [
       "Тонкі крафтові медові коржі власного виробництва. Вам залишається додати крем та зібрати торт.",
     badge: "Хіт",
     isFeatured: true,
+    setContents:
+      "Коржі 10 шт\nПосипка\nВолоський горіх\nПідложка для торта\nЛистівка з рецептами\nКоробка + пакування",
     variants: [
       { label: "Ø 18 см", weightLabel: "500–550 г", priceKop: 45000 },
       { label: "Ø 20 см", weightLabel: "600–650 г", priceKop: 52000 },
@@ -118,6 +120,7 @@ const SECTIONS = [
 ];
 
 const TRUST = [
+  // Main page strip, matching the design.
   {
     icon: "croissant",
     label: "Випікаємо щодня",
@@ -125,34 +128,47 @@ const TRUST = [
     sort: 1,
   },
   {
+    icon: "truck",
+    label: "Відправка по Україні",
+    scope: "main" as const,
+    sort: 2,
+  },
+  {
+    icon: "instagram",
+    label: "78 000+ підписників",
+    scope: "main" as const,
+    sort: 3,
+  },
+  {
+    icon: "credit-card",
+    label: "Оплата карткою або при отриманні",
+    scope: "main" as const,
+    sort: 4,
+  },
+  // Category pages.
+  {
     icon: "leaf",
     label: "Натуральний мед",
     scope: "category" as const,
-    sort: 2,
+    sort: 5,
   },
   {
     icon: "heart",
     label: "Без маргарину та пальмової олії",
     scope: "category" as const,
-    sort: 3,
+    sort: 6,
   },
   {
     icon: "crown",
     label: "Стабільна якість",
     scope: "category" as const,
-    sort: 4,
+    sort: 7,
   },
   {
     icon: "cake-slice",
     label: "Торти як з кондитерської",
-    scope: "main" as const,
-    sort: 5,
-  },
-  {
-    icon: "truck",
-    label: "Відправка день у день",
-    scope: "main" as const,
-    sort: 6,
+    scope: "category" as const,
+    sort: 8,
   },
 ];
 
@@ -240,6 +256,7 @@ async function main() {
         shortDescription: product.shortDescription,
         description: product.description,
         badge: product.badge,
+        setContents: "setContents" in product ? product.setContents : null,
         isFeatured: product.isFeatured,
         sort: index + 1,
       })
@@ -269,15 +286,18 @@ async function main() {
   await db.insert(siteSettings).values({
     id: 1,
     phone: "+38 (097) 000-00-00",
-    workingHours: "Пн–Нд, 9:00–20:00",
+    workingHours: "Приймаємо замовлення щодня 9:00–19:00",
     promoStripText: "Випікаємо щодня — відправляємо того ж дня",
-    heroTitle: "Коржі готові. Вам лишається тільки крем",
+    heroTitle: "Ми спекли коржі.",
+    heroTitleAccent: "Ви збираєте торт",
     heroSubtitle:
-      "Крафтові бісквітні, медові та шоколадні коржі власного випікання. Відправляємо Новою Поштою.",
+      "Медовик, наполеон та бісквіти — крафтові коржі власного виробництва. Відправляємо Новою поштою по всій Україні.",
     heroScript: "Смачні торти — це просто!",
     aboutTitle: "Крафтові коржі, спечені сьогодні зранку",
     aboutText:
-      "Ми — маленька родинна пекарня. Кожен корж випікаємо вручну зранку й того ж дня відправляємо вам. Без сухих сумішей, консервантів і заморозки.",
+      "Ми — маленька родинна пекарня. Кожен корж випікаємо вручну зранку й того ж дня відправляємо вам. Без сухих сумішей, консервантів і заморозки — тільки борошно, яйця, масло та мед.",
+    aboutBullets:
+      "Власне виробництво з 2019 року\nТільки натуральні інгредієнти\nПонад 12 000 замовлень по Україні",
   });
 
   console.log(

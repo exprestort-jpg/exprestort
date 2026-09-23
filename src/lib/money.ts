@@ -10,13 +10,15 @@ export function toHryvnia(kopiyky: number): string {
   return (kopiyky / 100).toFixed(2).replace(/\.00$/, "");
 }
 
-const formatter = new Intl.NumberFormat("uk-UA", {
-  style: "currency",
-  currency: "UAH",
+/*
+ * The UAH currency style renders «450 грн», but the brand and the design use
+ * the ₴ glyph, so the number is formatted on its own and the symbol appended.
+ */
+const numberFormatter = new Intl.NumberFormat("uk-UA", {
   maximumFractionDigits: 0,
 });
 
 /** Display form: «450 ₴». */
 export function formatPrice(kopiyky: number): string {
-  return formatter.format(kopiyky / 100);
+  return `${numberFormatter.format(kopiyky / 100)} ₴`;
 }

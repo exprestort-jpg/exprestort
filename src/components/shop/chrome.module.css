@@ -1,0 +1,288 @@
+/* Promo strip, header, slide-out menu and footer — the frame around every page. */
+
+.promo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-8);
+  padding: 8px var(--gutter);
+  background: var(--accent);
+  /* Dark cocoa on orange, never white: small white text on this orange fails contrast. */
+  color: var(--text-primary);
+  font-size: 11px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px var(--gutter);
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+}
+
+.headerSide {
+  display: flex;
+  align-items: center;
+  gap: var(--s-16);
+  width: 72px;
+}
+
+.headerSideEnd {
+  justify-content: flex-end;
+}
+
+.logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.logoName {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.logoTagline {
+  color: var(--accent-strong);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 1.2px;
+}
+
+.iconButton {
+  display: flex;
+  align-items: center;
+  color: var(--text-primary);
+}
+
+.cartWrap {
+  position: relative;
+  display: flex;
+}
+
+.cartBadge {
+  position: absolute;
+  top: -5px;
+  left: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 4px;
+  border-radius: var(--r-pill);
+  background: var(--accent-strong);
+  color: var(--text-invert);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+/* Menu */
+
+.menuOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: rgba(42, 26, 16, 0.4);
+}
+
+.menuPanel {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-16);
+  padding: var(--s-20) var(--gutter) var(--s-24);
+  background: var(--surface);
+  overflow-y: auto;
+}
+
+.menuTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-12);
+}
+
+.menuRows {
+  display: flex;
+  flex-direction: column;
+}
+
+.menuRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-12);
+  padding: var(--s-12) 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.menuRow:last-child {
+  border-bottom: none;
+}
+
+.menuRowLeft {
+  display: flex;
+  align-items: center;
+  gap: var(--s-8);
+}
+
+.menuRowLabel {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.menuRowCount {
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.menuChevron {
+  color: var(--accent);
+}
+
+.menuLinks {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-12);
+}
+
+.menuLink {
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.menuBottom {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-12);
+  margin-top: auto;
+  padding-top: var(--s-20);
+  border-top: 1px solid var(--border);
+}
+
+.menuPhone {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+/* Footer */
+
+.footer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-24);
+  padding: var(--s-32) var(--gutter) var(--s-24);
+  background: var(--text-primary);
+  color: var(--text-invert);
+}
+
+.footerLogoName {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.footerTagline {
+  color: var(--accent);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 1.2px;
+}
+
+.footerColumns {
+  display: flex;
+  gap: var(--s-16);
+}
+
+.footerColumn {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--s-12);
+}
+
+.footerColTitle {
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+}
+
+.footerLink {
+  color: #d8c7b1;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.footerLink:hover {
+  color: var(--text-invert);
+}
+
+.footerPhone {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.footerHours {
+  color: #c3b09a;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.footerSocial {
+  display: flex;
+  gap: var(--s-12);
+}
+
+.socialButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--r-pill);
+  color: var(--text-invert);
+}
+
+.socialButton:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.footerDivider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.copyright {
+  color: #a8947e;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+@media (min-width: 768px) {
+  .header,
+  .promo,
+  .footer {
+    padding-left: max(var(--gutter), calc((100vw - var(--content-max)) / 2));
+    padding-right: max(var(--gutter), calc((100vw - var(--content-max)) / 2));
+  }
+
+  .footerColumns {
+    gap: var(--s-48);
+  }
+}

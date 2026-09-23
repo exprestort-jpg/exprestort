@@ -13,11 +13,13 @@ const schema = z.object({
   workingHours: z.string().max(160),
   promoStripText: z.string().max(160),
   heroTitle: z.string().max(160),
+  heroTitleAccent: z.string().max(160),
   heroSubtitle: z.string().max(320),
   heroScript: z.string().max(80),
   heroImageUrl: z.string().url("Некоректне посилання").or(z.literal("")),
   aboutTitle: z.string().max(160),
   aboutText: z.string().max(2000),
+  aboutBullets: z.string().max(1000),
   aboutImageUrl: z.string().url("Некоректне посилання").or(z.literal("")),
 });
 
@@ -32,11 +34,13 @@ export async function saveSettings(
     workingHours: str(formData, "workingHours"),
     promoStripText: str(formData, "promoStripText"),
     heroTitle: str(formData, "heroTitle"),
+    heroTitleAccent: str(formData, "heroTitleAccent"),
     heroSubtitle: str(formData, "heroSubtitle"),
     heroScript: str(formData, "heroScript"),
     heroImageUrl: str(formData, "heroImageUrl"),
     aboutTitle: str(formData, "aboutTitle"),
     aboutText: str(formData, "aboutText"),
+    aboutBullets: str(formData, "aboutBullets"),
     aboutImageUrl: str(formData, "aboutImageUrl"),
   });
 

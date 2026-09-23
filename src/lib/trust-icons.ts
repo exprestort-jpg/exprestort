@@ -11,6 +11,8 @@ export const TRUST_ICONS = [
   { name: "heart", label: "Серце" },
   { name: "crown", label: "Корона" },
   { name: "truck", label: "Доставка" },
+  { name: "instagram", label: "Instagram" },
+  { name: "credit-card", label: "Оплата" },
   { name: "package", label: "Коробка" },
   { name: "clock", label: "Годинник" },
   { name: "shield-check", label: "Щит" },

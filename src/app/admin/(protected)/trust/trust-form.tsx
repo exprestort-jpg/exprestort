@@ -2,10 +2,10 @@
 
 import Link from "next/link";
 import { useActionState, useState } from "react";
+import { TrustIcon } from "@/components/trust-icon";
 import type { FormState } from "@/lib/form";
 import { TRUST_ICONS } from "@/lib/trust-icons";
 import styles from "../_components/admin.module.css";
-import { TrustIcon } from "../_components/trust-icon";
 import { saveTrustItem } from "./actions";
 
 export type TrustFormValues = {

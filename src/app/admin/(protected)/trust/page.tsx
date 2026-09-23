@@ -1,10 +1,10 @@
 import { asc } from "drizzle-orm";
 import Link from "next/link";
+import { TrustIcon } from "@/components/trust-icon";
 import { db } from "@/db";
 import { trustItems } from "@/db/schema";
 import { requireAdmin } from "@/lib/require-admin";
 import styles from "../_components/admin.module.css";
-import { TrustIcon } from "../_components/trust-icon";
 import { DeleteTrustButton } from "./delete-button";
 
 export const instant = false;

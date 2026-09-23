@@ -66,6 +66,7 @@ export default async function EditProductPage({
           shortDescription: product.shortDescription ?? "",
           description: product.description ?? "",
           badge: product.badge ?? "",
+          setContents: product.setContents ?? "",
           isActive: product.isActive,
           isFeatured: product.isFeatured,
           sort: product.sort,

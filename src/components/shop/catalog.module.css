@@ -1,0 +1,212 @@
+.breadcrumbs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+}
+
+.crumb {
+  color: var(--text-secondary);
+}
+
+.crumbCurrent {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.crumbSep {
+  color: var(--text-secondary);
+}
+
+/* Product row — used by «Популярне» and by category listings. */
+
+.row {
+  display: flex;
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+}
+
+.rowPhoto {
+  position: relative;
+  flex-shrink: 0;
+  width: 134px;
+  min-height: 186px;
+  background: var(--surface-alt);
+}
+
+.rowInfo {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  padding: var(--s-12);
+}
+
+.rowName {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.rowDesc {
+  color: var(--text-secondary);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.rowSizes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.sizeChip {
+  padding: 3px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-pill);
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.rowBottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-8);
+  margin-top: auto;
+  padding-top: var(--s-8);
+}
+
+.rowPrice {
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.rowPriceFrom {
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.rowAction {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  border-radius: var(--r-pill);
+  background: var(--accent);
+  color: #ffffff;
+}
+
+.badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 1;
+  padding: 5px 10px;
+  border-radius: var(--r-pill);
+  background: var(--accent);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.photoEmpty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--text-secondary);
+  font-size: 11px;
+}
+
+/* Category tile grid */
+
+.tileGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--s-8);
+}
+
+.tile {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+}
+
+.tilePhoto {
+  position: relative;
+  height: 112px;
+  background: var(--surface-alt);
+}
+
+.tileBottom {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  padding: var(--s-8);
+}
+
+.tileLabel {
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.25;
+  text-align: center;
+}
+
+.tileArrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: var(--r-pill);
+  background: var(--accent);
+  color: #ffffff;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-12);
+}
+
+@media (min-width: 768px) {
+  .tileGrid {
+    grid-template-columns: repeat(6, 1fr);
+  }
+
+  .tilePhoto {
+    height: 140px;
+  }
+
+  .tileLabel {
+    font-size: 13px;
+  }
+
+  .list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--s-16);
+  }
+}
+
+@media (min-width: 1024px) {
+  .list {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

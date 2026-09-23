@@ -1,0 +1,402 @@
+.hero {
+  position: relative;
+  min-height: 430px;
+  display: flex;
+  align-items: flex-start;
+  overflow: hidden;
+  background: var(--surface-alt);
+}
+
+.heroImage {
+  object-fit: cover;
+  object-position: center;
+}
+
+/* Warm scrim so the headline stays readable over any photo the client uploads. */
+.heroScrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 247, 239, 0.95) 0%,
+    rgba(255, 247, 239, 0.77) 42%,
+    rgba(255, 247, 239, 0) 80%
+  );
+}
+
+.heroContent {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-12);
+  max-width: 252px;
+  padding: 52px var(--gutter) var(--s-32);
+}
+
+.heroTitle {
+  font-family: var(--font-display);
+  font-size: 35px;
+  font-weight: 800;
+  line-height: 1.08;
+}
+
+/* Block, so the accent half always starts its own line as in the design. */
+.heroTitleAccent {
+  display: block;
+  color: var(--accent);
+}
+
+.heroSubtitle {
+  max-width: 210px;
+  color: #4a382c;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.heroScript {
+  position: absolute;
+  top: 18px;
+  right: var(--gutter);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 150px;
+  color: var(--accent-strong);
+  font-family: var(--font-script);
+  font-size: 21px;
+  font-weight: 600;
+  line-height: 1.25;
+  text-align: right;
+  transform: rotate(-5deg);
+}
+
+.heroCta {
+  align-self: flex-start;
+}
+
+.section {
+  padding: var(--s-32) var(--gutter);
+}
+
+.sectionTight {
+  padding: var(--s-24) var(--gutter) var(--s-8);
+}
+
+.sectionAlt {
+  background: var(--surface-alt);
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-12);
+  margin-bottom: var(--s-12);
+}
+
+.sectionTitle {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.sectionLink {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  color: var(--accent-strong);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.trustRow {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--s-8);
+}
+
+.trustItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-8);
+}
+
+.trustIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--accent-soft);
+  border-radius: var(--r-pill);
+  background: var(--surface);
+  color: var(--accent-strong);
+}
+
+.trustLabel {
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.3;
+  text-align: center;
+}
+
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-20);
+}
+
+.step {
+  display: flex;
+  gap: var(--s-16);
+}
+
+.stepNumber {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border: 1px solid var(--accent);
+  border-radius: var(--r-pill);
+  background: var(--surface);
+  color: var(--accent-strong);
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.stepTitle {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.stepDesc {
+  margin-top: var(--s-4);
+  color: var(--text-secondary);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/*
+ * The row runs edge to edge so cards pass under both screen edges while
+ * scrolling. The gutter lives on the scroller, not the section: padding on a
+ * scroll container scrolls away with the content, so the first and last cards
+ * still sit inset at rest, but nothing is clipped against a fixed padding line
+ * mid-scroll. The heading keeps its own gutter.
+ */
+.reviewsSection {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.reviewsHeader {
+  padding-left: var(--gutter);
+  padding-right: var(--gutter);
+}
+
+.reviewsScroller {
+  display: flex;
+  gap: var(--s-12);
+  overflow-x: auto;
+  padding-left: var(--gutter);
+  padding-right: var(--gutter);
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  scroll-padding-left: var(--gutter);
+}
+
+.reviewsScroller::-webkit-scrollbar {
+  display: none;
+}
+
+.review {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-12);
+  width: 266px;
+  flex-shrink: 0;
+  padding: var(--s-16);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  scroll-snap-align: start;
+}
+
+.reviewTop {
+  display: flex;
+  align-items: center;
+  gap: var(--s-12);
+}
+
+.reviewAvatar {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  overflow: hidden;
+  border-radius: var(--r-pill);
+  background: var(--surface-alt);
+}
+
+/* Fallback when a review has no photo, so the circle is not just an empty hole. */
+.reviewInitial {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: var(--accent-strong);
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.reviewAuthor {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.reviewStars {
+  display: flex;
+  gap: 2px;
+  color: var(--accent);
+}
+
+.reviewQuote {
+  color: var(--text-secondary);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.aboutPhoto {
+  position: relative;
+  height: 200px;
+  overflow: hidden;
+  border-radius: var(--r-md);
+  background: var(--surface-alt);
+}
+
+.aboutTitle {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.aboutText {
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.aboutList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-12);
+  padding: var(--s-4) 0;
+}
+
+.aboutBullet {
+  display: flex;
+  align-items: center;
+  gap: var(--s-12);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.aboutCheck {
+  flex-shrink: 0;
+  color: var(--olive);
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-16);
+}
+
+@media (min-width: 768px) {
+  .hero {
+    min-height: 520px;
+    align-items: center;
+  }
+
+  .heroContent {
+    max-width: var(--content-max);
+    width: 100%;
+    margin: 0 auto;
+    padding: var(--s-48) var(--gutter);
+  }
+
+  .heroTitle {
+    font-size: 52px;
+  }
+
+  .heroSubtitle {
+    max-width: 380px;
+    font-size: 15px;
+  }
+
+  .heroScript {
+    font-size: 28px;
+    max-width: 220px;
+    right: 6vw;
+    top: 8vh;
+  }
+
+  .section,
+  .sectionTight {
+    max-width: var(--content-max);
+    margin: 0 auto;
+    padding-left: var(--gutter);
+    padding-right: var(--gutter);
+  }
+
+  .sectionAlt {
+    max-width: none;
+  }
+
+  .sectionAlt > * {
+    max-width: var(--content-max);
+    margin: 0 auto;
+  }
+
+  .sectionTitle {
+    font-size: 30px;
+  }
+
+  .reviewsSection {
+    padding-left: var(--gutter);
+    padding-right: var(--gutter);
+  }
+
+  .reviewsHeader {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .reviewsScroller {
+    padding-left: 0;
+    padding-right: 0;
+    scroll-padding-left: 0;
+  }
+
+  .steps {
+    flex-direction: row;
+  }
+
+  .step {
+    flex: 1;
+  }
+
+  .aboutPhoto {
+    height: 320px;
+  }
+}

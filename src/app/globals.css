@@ -114,3 +114,66 @@ select {
   outline: 2px solid var(--accent-strong);
   outline-offset: 2px;
 }
+
+/* Shared storefront primitives. Kept global because the same button and
+   container appear in nearly every shop component. */
+
+.container {
+  width: 100%;
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding-left: var(--gutter);
+  padding-right: var(--gutter);
+}
+
+.buttonPrimary,
+.buttonGhost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-8);
+  padding: 14px var(--s-24);
+  border-radius: var(--r-pill);
+  font-size: 15px;
+  font-weight: 600;
+  text-align: center;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.buttonPrimary {
+  background: var(--accent);
+  color: #ffffff;
+}
+
+.buttonPrimary:hover {
+  background: var(--accent-strong);
+}
+
+.buttonGhost {
+  padding: 13px var(--s-24);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+}
+
+.buttonGhost:hover {
+  border-color: var(--accent);
+  color: var(--accent-strong);
+}
+
+.buttonBlock {
+  width: 100%;
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

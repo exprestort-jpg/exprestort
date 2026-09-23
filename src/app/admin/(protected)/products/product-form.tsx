@@ -27,6 +27,7 @@ export type ProductFormValues = {
   shortDescription: string;
   description: string;
   badge: string;
+  setContents: string;
   isActive: boolean;
   isFeatured: boolean;
   sort: number;
@@ -46,6 +47,7 @@ export const emptyProduct: ProductFormValues = {
   shortDescription: "",
   description: "",
   badge: "",
+  setContents: "",
   isActive: true,
   isFeatured: false,
   sort: 0,
@@ -197,6 +199,22 @@ export function ProductForm({
           className={styles.textarea}
           defaultValue={values.description}
         />
+      </div>
+
+      <div className={styles.field}>
+        <label className={styles.label} htmlFor="setContents">
+          Склад набору
+        </label>
+        <textarea
+          id="setContents"
+          name="setContents"
+          className={styles.textarea}
+          defaultValue={values.setContents}
+          placeholder={"Коржі 10 шт\nПосипка\nПідложка для торта"}
+        />
+        <span className={styles.hint}>
+          По одному пункту в рядку. Порожньо — блок не показується.
+        </span>
       </div>
 
       <FormSection
