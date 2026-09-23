@@ -1,17 +1,53 @@
+/* Design tokens mirror the Pencil variables. Change them there first. */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --accent: #ff5a00;
+  --accent-strong: #d24400;
+  --accent-soft: #ffe2ce;
+  --olive: #6e834f;
+
+  --bg: #fdf8f3;
+  --surface: #ffffff;
+  --surface-alt: #fbeadc;
+  --border: #eedccb;
+
+  --text-primary: #2a1a10;
+  --text-secondary: #7a6355;
+  --text-invert: #fff9f0;
+
+  --r-sm: 12px;
+  --r-md: 20px;
+  --r-pill: 999px;
+
+  --s-4: 4px;
+  --s-8: 8px;
+  --s-12: 12px;
+  --s-16: 16px;
+  --s-20: 20px;
+  --s-24: 24px;
+  --s-32: 32px;
+  --s-48: 48px;
+
+  --font-body: var(--font-manrope), system-ui, sans-serif;
+  --font-display: var(--font-playfair), Georgia, serif;
+  --font-script: var(--font-caveat), cursive;
+
+  /* Page gutter, matches the 390px mobile frame in the design. */
+  --gutter: var(--s-16);
+  --content-max: 1200px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 html {
   height: 100%;
+  /* The design is light-only. Stop the OS from recolouring form controls. */
+  color-scheme: light;
 }
 
 html,
@@ -24,17 +60,21 @@ body {
   min-height: 100%;
   display: flex;
   flex-direction: column;
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  line-height: 1.2;
+  font-weight: 700;
 }
 
 a {
@@ -42,8 +82,30 @@ a {
   text-decoration: none;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+img,
+picture,
+svg,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent-strong);
+  outline-offset: 2px;
 }

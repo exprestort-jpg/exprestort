@@ -1,0 +1,64 @@
+.shell {
+  display: flex;
+  flex: 1;
+  min-height: 100vh;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  width: 220px;
+  padding: var(--s-24) var(--s-16);
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+}
+
+.brand {
+  margin-bottom: var(--s-24);
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.navLink {
+  padding: 9px var(--s-12);
+  border-radius: var(--r-sm);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.navLink:hover {
+  background: var(--surface-alt);
+}
+
+.footer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-8);
+  margin-top: auto;
+  padding-top: var(--s-16);
+  border-top: 1px solid var(--border);
+}
+
+.user {
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.logout {
+  align-self: start;
+  color: var(--accent-strong);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.content {
+  flex: 1;
+  padding: var(--s-32) var(--s-24);
+}
