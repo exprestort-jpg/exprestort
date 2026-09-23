@@ -48,6 +48,8 @@ async function ProductContent({
       />
 
       <ProductDetail
+        productId={product.id}
+        slug={product.slug}
         title={product.title}
         images={images.map((image) => ({ url: image.url, alt: image.alt }))}
         variants={variants.map((variant) => ({

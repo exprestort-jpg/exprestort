@@ -3,6 +3,7 @@
 import { ChevronDown, ChevronUp, ShoppingCart } from "lucide-react";
 import Image from "next/image";
 import { type ReactNode, useState } from "react";
+import { useCart } from "@/lib/cart-store";
 import { formatPrice } from "@/lib/money";
 import styles from "./product.module.css";
 
@@ -23,12 +24,16 @@ export type ProductSectionView = { id: number; title: string; body: string };
  * would just mean lifting the same state one level up.
  */
 export function ProductDetail({
+  productId,
+  slug,
   title,
   images,
   variants,
   sections,
   children,
 }: {
+  productId: number;
+  slug: string;
   title: string;
   images: ProductImageView[];
   variants: ProductVariantView[];
@@ -45,7 +50,28 @@ export function ProductDetail({
     sections[0]?.id ?? null,
   );
 
+  const [added, setAdded] = useState(false);
+  const addToCart = useCart((state) => state.add);
+
   const current = images[activeImage];
+  const activeVariant =
+    variants.find((variant) => variant.id === activeVariantId) ?? null;
+
+  function handleAdd() {
+    if (!activeVariant) return;
+    addToCart({
+      productId,
+      variantId: activeVariant.id,
+      slug,
+      title,
+      variantLabel: activeVariant.label,
+      priceKop: activeVariant.priceKop,
+      imageUrl: images[0]?.url ?? null,
+    });
+    setAdded(true);
+    // Brief confirmation on the button itself; no toast system to pull in.
+    window.setTimeout(() => setAdded(false), 2000);
+  }
 
   return (
     <>
@@ -114,9 +140,14 @@ export function ProductDetail({
             ))}
           </div>
 
-          <button type="button" className="buttonPrimary buttonBlock" disabled>
+          <button
+            type="button"
+            className="buttonPrimary buttonBlock"
+            onClick={handleAdd}
+            disabled={!activeVariant}
+          >
             <ShoppingCart size={17} strokeWidth={2} aria-hidden />
-            Додати в кошик
+            {added ? "Додано в кошик" : "Додати в кошик"}
           </button>
         </>
       ) : null}

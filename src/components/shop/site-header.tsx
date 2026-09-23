@@ -3,6 +3,7 @@
 import { ChevronRight, Menu, Search, ShoppingBag, X } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { cartCount, useCart } from "@/lib/cart-store";
 import styles from "./chrome.module.css";
 
 export type MenuCategory = {
@@ -24,6 +25,10 @@ export function SiteHeader({
   phone: string;
 }) {
   const [open, setOpen] = useState(false);
+  // Read after hydration only: the server has no localStorage, so rendering the
+  // real count straight away would mismatch and get wiped by React.
+  const hydrated = useCart((state) => state.hydrated);
+  const count = useCart((state) => cartCount(state.lines));
 
   useEffect(() => {
     if (!open) return;
@@ -63,9 +68,16 @@ export function SiteHeader({
           <Link href="/search" className={styles.iconButton} aria-label="Пошук">
             <Search size={22} strokeWidth={1.75} />
           </Link>
-          <Link href="/cart" className={styles.iconButton} aria-label="Кошик">
+          <Link
+            href="/cart"
+            className={styles.iconButton}
+            aria-label={count > 0 ? `Кошик, товарів: ${count}` : "Кошик"}
+          >
             <span className={styles.cartWrap}>
               <ShoppingBag size={24} strokeWidth={1.75} />
+              {hydrated && count > 0 ? (
+                <span className={styles.cartBadge}>{count}</span>
+              ) : null}
             </span>
           </Link>
         </div>

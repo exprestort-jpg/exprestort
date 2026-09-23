@@ -32,7 +32,8 @@
     "react-dom": "19.2.8",
     "sanitize-html": "^2.17.7",
     "ws": "^8.21.3",
-    "zod": "^4.6.5"
+    "zod": "^4.6.5",
+    "zustand": "^5.0.15"
   },
   "devDependencies": {
     "@biomejs/biome": "2.4.2",
