@@ -149,6 +149,44 @@ export async function getPopularProducts(limit = 4): Promise<ProductCardRow[]> {
   return rows;
 }
 
+/** Shortest query that hits the database. Anything below this returns nothing. */
+export const SEARCH_MIN_LENGTH = 2;
+
+/** Cap the term so a long query cannot blow up the cache key or the LIKE scan. */
+const SEARCH_MAX_LENGTH = 64;
+
+export function normalizeSearchQuery(raw: string | undefined): string {
+  return (raw ?? "").trim().slice(0, SEARCH_MAX_LENGTH).toLowerCase();
+}
+
+/**
+ * Substring search over the product title. `%` and `_` are escaped so a term
+ * like «50%» searches for that text rather than acting as a wildcard.
+ *
+ * Backed by products_title_trgm_idx — see the schema comment on why a plain
+ * btree cannot serve a leading-wildcard LIKE.
+ */
+export async function searchProducts(term: string): Promise<ProductCardRow[]> {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("products");
+
+  if (term.length < SEARCH_MIN_LENGTH) return [];
+
+  const pattern = `%${term.replace(/[\\%_]/g, (char) => `\\${char}`)}%`;
+
+  return productCardSelect()
+    .where(
+      and(
+        eq(products.isActive, true),
+        sql`lower(${products.title}) like ${pattern} escape '\\'`,
+      ),
+    )
+    .groupBy(products.id)
+    .orderBy(asc(products.sort), asc(products.title))
+    .limit(30);
+}
+
 export async function getCategoryBySlug(slug: string) {
   "use cache";
   cacheLife("max");

@@ -1,3 +1,4 @@
+import { sql } from "drizzle-orm";
 import {
   boolean,
   index,
@@ -81,6 +82,15 @@ export const products = pgTable(
   (t) => [
     uniqueIndex("products_slug_idx").on(t.slug),
     index("products_category_idx").on(t.categoryId),
+    /*
+     * Trigram index for the header search. It matches on `lower(title) like
+     * '%q%'`, and a leading wildcard makes a btree useless — only a GIN trigram
+     * index can serve that. Needs the pg_trgm extension (see the migration).
+     */
+    index("products_title_trgm_idx").using(
+      "gin",
+      sql`lower(${t.title}) gin_trgm_ops`,
+    ),
   ],
 );
 

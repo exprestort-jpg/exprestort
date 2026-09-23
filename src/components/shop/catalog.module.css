@@ -185,6 +185,48 @@
   gap: var(--s-12);
 }
 
+/* Search */
+
+.searchForm {
+  display: flex;
+  gap: var(--s-8);
+}
+
+.searchField {
+  position: relative;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  min-width: 0;
+}
+
+.searchIcon {
+  position: absolute;
+  left: var(--s-12);
+  color: var(--text-secondary);
+  pointer-events: none;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 12px var(--s-12) 12px 40px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-pill);
+  background: var(--surface);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 15px;
+}
+
+.searchInput:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.searchInput::placeholder {
+  color: var(--text-secondary);
+}
+
 @media (min-width: 768px) {
   .tileGrid {
     grid-template-columns: repeat(6, 1fr);
