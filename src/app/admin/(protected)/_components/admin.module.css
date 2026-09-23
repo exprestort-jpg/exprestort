@@ -1,0 +1,245 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-16);
+  margin-bottom: var(--s-24);
+}
+
+.title {
+  font-size: 26px;
+}
+
+.subtitle {
+  margin-top: var(--s-4);
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-8);
+  padding: 9px var(--s-20);
+  border: 1px solid var(--border);
+  border-radius: var(--r-pill);
+  background: var(--surface);
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.buttonPrimary {
+  border-color: transparent;
+  background: var(--accent);
+  color: var(--text-invert);
+}
+
+.buttonDanger {
+  border-color: transparent;
+  background: none;
+  color: var(--accent-strong);
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  overflow: hidden;
+}
+
+.table th {
+  padding: var(--s-12) var(--s-16);
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-alt);
+  font-size: 12px;
+  font-weight: 700;
+  text-align: left;
+}
+
+.table td {
+  padding: var(--s-12) var(--s-16);
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+  vertical-align: middle;
+}
+
+.table tr:last-child td {
+  border-bottom: none;
+}
+
+.rowActions {
+  display: flex;
+  gap: var(--s-8);
+  justify-content: end;
+}
+
+.muted {
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.pill {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: var(--r-pill);
+  background: var(--surface-alt);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.pillOff {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+}
+
+.empty {
+  padding: var(--s-32);
+  border: 1px dashed var(--border);
+  border-radius: var(--r-md);
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-16);
+  max-width: 620px;
+  padding: var(--s-24);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.input,
+.textarea,
+.select {
+  padding: 10px var(--s-12);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  font-size: 14px;
+}
+
+.textarea {
+  min-height: 96px;
+  resize: vertical;
+}
+
+.hint {
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.fieldError {
+  color: var(--accent-strong);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.formError {
+  padding: var(--s-12);
+  border-radius: var(--r-sm);
+  background: var(--accent-soft);
+  color: var(--accent-strong);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.checkboxRow {
+  display: flex;
+  align-items: center;
+  gap: var(--s-8);
+}
+
+.formActions {
+  display: flex;
+  gap: var(--s-12);
+  padding-top: var(--s-8);
+  border-top: 1px solid var(--border);
+}
+
+.grid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--s-16);
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-12);
+  padding-top: var(--s-16);
+  border-top: 1px solid var(--border);
+}
+
+.sectionTitle {
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.repeaterRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr 120px auto;
+  align-items: start;
+  gap: var(--s-8);
+}
+
+.repeaterStack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-8);
+  padding: var(--s-12);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+}
+
+.repeaterHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-8);
+}
+
+.iconButton {
+  padding: 6px 10px;
+  border-radius: var(--r-sm);
+  color: var(--accent-strong);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.addButton {
+  align-self: start;
+  padding: 7px var(--s-16);
+  border: 1px dashed var(--border);
+  border-radius: var(--r-pill);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.pillInline {
+  margin-left: var(--s-8);
+}
