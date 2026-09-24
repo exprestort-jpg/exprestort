@@ -22,6 +22,8 @@ export type SettingsValues = {
   aboutText: string;
   aboutBullets: string;
   aboutImageUrl: string;
+  seoTitle: string;
+  seoDescription: string;
 };
 
 const initialState: FormState = {};
@@ -47,6 +49,8 @@ export function SettingsForm({ values }: { values: SettingsValues }) {
       aboutTitle: values.aboutTitle,
       aboutText: values.aboutText,
       aboutBullets: values.aboutBullets,
+      seoTitle: values.seoTitle,
+      seoDescription: values.seoDescription,
     },
     schema: settingsTextSchema,
     state,
@@ -211,6 +215,38 @@ export function SettingsForm({ values }: { values: SettingsValues }) {
           />
           {errors.aboutImageUrl ? (
             <span className={styles.fieldError}>{errors.aboutImageUrl}</span>
+          ) : null}
+        </div>
+      </FormSection>
+
+      <FormSection title="SEO головної сторінки">
+        <div className={styles.field}>
+          <label className={styles.label} htmlFor="seoTitle">
+            Заголовок у пошуку
+          </label>
+          <input className={styles.input} {...form.field("seoTitle")} />
+          <span className={styles.hint}>
+            Тег title і підпис у месенджерах. Порожнє — береться заголовок
+            банера. До 60 символів.
+          </span>
+          {errors.seoTitle ? (
+            <span className={styles.fieldError}>{errors.seoTitle}</span>
+          ) : null}
+        </div>
+
+        <div className={styles.field}>
+          <label className={styles.label} htmlFor="seoDescription">
+            Опис у пошуку
+          </label>
+          <textarea
+            className={styles.textarea}
+            {...form.field("seoDescription")}
+          />
+          <span className={styles.hint}>
+            Порожнє — береться підзаголовок банера. До 160 символів.
+          </span>
+          {errors.seoDescription ? (
+            <span className={styles.fieldError}>{errors.seoDescription}</span>
           ) : null}
         </div>
       </FormSection>

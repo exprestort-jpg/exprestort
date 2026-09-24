@@ -200,6 +200,11 @@ export const siteSettings = pgTable("site_settings", {
   /** Ticked bullets under the About text, one per line. */
   aboutBullets: text("about_bullets").notNull().default(""),
   aboutImageUrl: text("about_image_url"),
+  /** Metadata for the home page. Empty falls back to the hero copy. */
+  seoTitle: varchar("seo_title", { length: 160 }).notNull().default(""),
+  seoDescription: varchar("seo_description", { length: 320 })
+    .notNull()
+    .default(""),
   updatedAt: timestamp("updated_at", { withTimezone: true })
     .notNull()
     .defaultNow(),

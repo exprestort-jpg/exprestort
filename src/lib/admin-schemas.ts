@@ -100,4 +100,6 @@ export const settingsTextSchema = z.object({
   aboutText: z.string().max(2000, "Текст задовгий"),
   aboutBullets: z.string().max(1000, "Список задовгий"),
   aboutImageUrl: z.string().url("Некоректне посилання").or(z.literal("")),
+  seoTitle: z.string().max(160, "Заголовок задовгий"),
+  seoDescription: z.string().max(320, "Опис задовгий"),
 });

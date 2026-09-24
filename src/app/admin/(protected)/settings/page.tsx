@@ -40,6 +40,8 @@ export default async function SettingsPage() {
           aboutText: settings?.aboutText ?? "",
           aboutBullets: settings?.aboutBullets ?? "",
           aboutImageUrl: settings?.aboutImageUrl ?? "",
+          seoTitle: settings?.seoTitle ?? "",
+          seoDescription: settings?.seoDescription ?? "",
         }}
       />
     </>

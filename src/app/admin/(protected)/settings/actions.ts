@@ -29,6 +29,8 @@ export async function saveSettings(
     aboutText: str(formData, "aboutText"),
     aboutBullets: str(formData, "aboutBullets"),
     aboutImageUrl: str(formData, "aboutImageUrl"),
+    seoTitle: str(formData, "seoTitle"),
+    seoDescription: str(formData, "seoDescription"),
   });
 
   if (!parsed.success) return toFieldErrors(parsed.error);
