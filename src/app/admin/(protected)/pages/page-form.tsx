@@ -2,8 +2,10 @@
 
 import Link from "next/link";
 import { useActionState, useState } from "react";
+import { pageTextSchema } from "@/lib/admin-schemas";
 import type { FormState } from "@/lib/form";
 import { slugify } from "@/lib/slug";
+import { useAdminForm } from "@/lib/use-admin-form";
 import styles from "../_components/admin.module.css";
 import { RichEditor } from "../_components/rich-editor";
 import { savePage } from "./actions";
@@ -29,28 +31,38 @@ const initialState: FormState = {};
 
 export function PageForm({ values }: { values: PageFormValues }) {
   const [state, formAction, pending] = useActionState(savePage, initialState);
-  const [title, setTitle] = useState(values.title);
-  const [slug, setSlug] = useState(values.slug);
+  const form = useAdminForm({
+    initial: {
+      title: values.title,
+      slug: values.slug,
+      seoTitle: values.seoTitle,
+      seoDescription: values.seoDescription,
+    },
+    schema: pageTextSchema,
+    state,
+  });
   const [slugLocked, setSlugLocked] = useState(Boolean(values.id));
 
-  const errors = state.fieldErrors ?? {};
+  const { errors } = form;
+  const titleField = form.field("title");
+  const slugField = form.field("slug");
 
   return (
     <form action={formAction} className={styles.form} style={{ maxWidth: 760 }}>
       {values.id ? <input type="hidden" name="id" value={values.id} /> : null}
+
+      {state.error ? <p className={styles.formError}>{state.error}</p> : null}
 
       <div className={styles.field}>
         <label className={styles.label} htmlFor="title">
           Заголовок
         </label>
         <input
-          id="title"
-          name="title"
           className={styles.input}
-          value={title}
+          {...titleField}
           onChange={(event) => {
-            setTitle(event.target.value);
-            if (!slugLocked) setSlug(slugify(event.target.value));
+            titleField.onChange(event);
+            if (!slugLocked) form.setValue("slug", slugify(event.target.value));
           }}
           required
         />
@@ -64,16 +76,16 @@ export function PageForm({ values }: { values: PageFormValues }) {
           Адреса сторінки
         </label>
         <input
-          id="slug"
-          name="slug"
           className={styles.input}
-          value={slug}
+          {...slugField}
           onChange={(event) => {
-            setSlug(event.target.value);
+            slugField.onChange(event);
             setSlugLocked(true);
           }}
         />
-        <span className={styles.hint}>expresstort.com.ua/{slug || "…"}</span>
+        <span className={styles.hint}>
+          expresstort.com.ua/{form.values.slug || "…"}
+        </span>
         {errors.slug ? (
           <span className={styles.fieldError}>{errors.slug}</span>
         ) : null}
@@ -82,18 +94,19 @@ export function PageForm({ values }: { values: PageFormValues }) {
       <div className={styles.field}>
         <span className={styles.label}>Текст сторінки</span>
         <RichEditor name="body" defaultValue={values.body} />
+        {errors.body ? (
+          <span className={styles.fieldError}>{errors.body}</span>
+        ) : null}
       </div>
 
       <div className={styles.field}>
         <label className={styles.label} htmlFor="seoTitle">
           SEO заголовок
         </label>
-        <input
-          id="seoTitle"
-          name="seoTitle"
-          className={styles.input}
-          defaultValue={values.seoTitle}
-        />
+        <input className={styles.input} {...form.field("seoTitle")} />
+        {errors.seoTitle ? (
+          <span className={styles.fieldError}>{errors.seoTitle}</span>
+        ) : null}
       </div>
 
       <div className={styles.field}>
@@ -101,11 +114,12 @@ export function PageForm({ values }: { values: PageFormValues }) {
           SEO опис
         </label>
         <textarea
-          id="seoDescription"
-          name="seoDescription"
           className={styles.textarea}
-          defaultValue={values.seoDescription}
+          {...form.field("seoDescription")}
         />
+        {errors.seoDescription ? (
+          <span className={styles.fieldError}>{errors.seoDescription}</span>
+        ) : null}
       </div>
 
       <div className={styles.formActions}>

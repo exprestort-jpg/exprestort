@@ -6,19 +6,13 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { db } from "@/db";
 import { reviews } from "@/db/schema";
+import { reviewTextSchema } from "@/lib/admin-schemas";
 import { deleteBlobs } from "@/lib/blob";
 import { type FormState, num, str, toFieldErrors } from "@/lib/form";
 import { assertAdmin } from "@/lib/require-admin";
 
-const schema = z.object({
-  author: z.string().min(2, "Вкажіть ім'я").max(80),
-  avatarUrl: z
-    .string()
-    .url("Некоректне посилання")
-    .or(z.literal(""))
-    .optional(),
+const schema = reviewTextSchema.extend({
   rating: z.number().int().min(1, "Від 1 до 5").max(5, "Від 1 до 5"),
-  text: z.string().min(10, "Відгук закороткий").max(1200, "Відгук задовгий"),
   sort: z.number().int().min(0).max(9999),
 });
 

@@ -2,8 +2,10 @@
 
 import Link from "next/link";
 import { useActionState, useState } from "react";
+import { categoryTextSchema } from "@/lib/admin-schemas";
 import type { FormState } from "@/lib/form";
 import { slugify } from "@/lib/slug";
+import { useAdminForm } from "@/lib/use-admin-form";
 import styles from "../_components/admin.module.css";
 import { ImageField } from "../_components/image-field";
 import { saveCategory } from "./actions";
@@ -27,13 +29,26 @@ export function CategoryForm({ values }: { values: CategoryFormValues }) {
     saveCategory,
     initialState,
   );
-  const [title, setTitle] = useState(values.title);
-  const [slug, setSlug] = useState(values.slug);
+  const form = useAdminForm({
+    initial: {
+      title: values.title,
+      slug: values.slug,
+      description: values.description,
+      seoTitle: values.seoTitle,
+      seoDescription: values.seoDescription,
+      sort: String(values.sort),
+    },
+    schema: categoryTextSchema,
+    state,
+  });
+  const [isActive, setIsActive] = useState(values.isActive);
   // Only a brand-new category follows the title; editing an existing slug would
   // break every link already pointing at it.
   const [slugLocked, setSlugLocked] = useState(Boolean(values.id));
 
-  const errors = state.fieldErrors ?? {};
+  const { errors } = form;
+  const titleField = form.field("title");
+  const slugField = form.field("slug");
 
   return (
     <form action={formAction} className={styles.form}>
@@ -46,13 +61,11 @@ export function CategoryForm({ values }: { values: CategoryFormValues }) {
           Назва
         </label>
         <input
-          id="title"
-          name="title"
           className={styles.input}
-          value={title}
+          {...titleField}
           onChange={(event) => {
-            setTitle(event.target.value);
-            if (!slugLocked) setSlug(slugify(event.target.value));
+            titleField.onChange(event);
+            if (!slugLocked) form.setValue("slug", slugify(event.target.value));
           }}
           required
         />
@@ -66,17 +79,15 @@ export function CategoryForm({ values }: { values: CategoryFormValues }) {
           Адреса сторінки
         </label>
         <input
-          id="slug"
-          name="slug"
           className={styles.input}
-          value={slug}
+          {...slugField}
           onChange={(event) => {
-            setSlug(event.target.value);
+            slugField.onChange(event);
             setSlugLocked(true);
           }}
         />
         <span className={styles.hint}>
-          expresstort.com.ua/catalog/{slug || "…"}
+          expresstort.com.ua/catalog/{form.values.slug || "…"}
         </span>
         {errors.slug ? (
           <span className={styles.fieldError}>{errors.slug}</span>
@@ -87,12 +98,7 @@ export function CategoryForm({ values }: { values: CategoryFormValues }) {
         <label className={styles.label} htmlFor="description">
           Опис
         </label>
-        <textarea
-          id="description"
-          name="description"
-          className={styles.textarea}
-          defaultValue={values.description}
-        />
+        <textarea className={styles.textarea} {...form.field("description")} />
         <span className={styles.hint}>
           Показується під заголовком на сторінці категорії.
         </span>
@@ -117,12 +123,10 @@ export function CategoryForm({ values }: { values: CategoryFormValues }) {
             Порядок
           </label>
           <input
-            id="sort"
-            name="sort"
             type="number"
             min={0}
             className={styles.input}
-            defaultValue={values.sort}
+            {...form.field("sort")}
           />
           <span className={styles.hint}>Менше число — вище в списку.</span>
         </div>
@@ -134,7 +138,8 @@ export function CategoryForm({ values }: { values: CategoryFormValues }) {
               id="isActive"
               name="isActive"
               type="checkbox"
-              defaultChecked={values.isActive}
+              checked={isActive}
+              onChange={(event) => setIsActive(event.target.checked)}
             />
             <span>Показувати на сайті</span>
           </label>
@@ -145,12 +150,10 @@ export function CategoryForm({ values }: { values: CategoryFormValues }) {
         <label className={styles.label} htmlFor="seoTitle">
           SEO заголовок
         </label>
-        <input
-          id="seoTitle"
-          name="seoTitle"
-          className={styles.input}
-          defaultValue={values.seoTitle}
-        />
+        <input className={styles.input} {...form.field("seoTitle")} />
+        {errors.seoTitle ? (
+          <span className={styles.fieldError}>{errors.seoTitle}</span>
+        ) : null}
       </div>
 
       <div className={styles.field}>
@@ -158,11 +161,12 @@ export function CategoryForm({ values }: { values: CategoryFormValues }) {
           SEO опис
         </label>
         <textarea
-          id="seoDescription"
-          name="seoDescription"
           className={styles.textarea}
-          defaultValue={values.seoDescription}
+          {...form.field("seoDescription")}
         />
+        {errors.seoDescription ? (
+          <span className={styles.fieldError}>{errors.seoDescription}</span>
+        ) : null}
       </div>
 
       <div className={styles.formActions}>

@@ -1,7 +1,9 @@
 "use client";
 
 import { useActionState } from "react";
+import { settingsTextSchema } from "@/lib/admin-schemas";
 import type { FormState } from "@/lib/form";
+import { useAdminForm } from "@/lib/use-admin-form";
 import styles from "../_components/admin.module.css";
 import { FormSection } from "../_components/form-section";
 import { ImageField } from "../_components/image-field";
@@ -29,11 +31,32 @@ export function SettingsForm({ values }: { values: SettingsValues }) {
     saveSettings,
     initialState,
   );
-  const errors = state.fieldErrors ?? {};
+  /*
+   * The two image URLs stay out of the hook: ImageField owns them in its own
+   * state and submits them through a hidden input.
+   */
+  const form = useAdminForm({
+    initial: {
+      phone: values.phone,
+      workingHours: values.workingHours,
+      promoStripText: values.promoStripText,
+      heroTitle: values.heroTitle,
+      heroTitleAccent: values.heroTitleAccent,
+      heroSubtitle: values.heroSubtitle,
+      heroScript: values.heroScript,
+      aboutTitle: values.aboutTitle,
+      aboutText: values.aboutText,
+      aboutBullets: values.aboutBullets,
+    },
+    schema: settingsTextSchema,
+    state,
+  });
+  const { errors } = form;
 
   return (
     <form action={formAction} className={styles.form}>
       {state.saved ? <p className={styles.savedNote}>Збережено.</p> : null}
+      {state.error ? <p className={styles.formError}>{state.error}</p> : null}
 
       <FormSection title="Контакти">
         <div className={styles.grid2}>
@@ -41,13 +64,7 @@ export function SettingsForm({ values }: { values: SettingsValues }) {
             <label className={styles.label} htmlFor="phone">
               Телефон
             </label>
-            <input
-              id="phone"
-              name="phone"
-              className={styles.input}
-              defaultValue={values.phone}
-              required
-            />
+            <input className={styles.input} {...form.field("phone")} required />
             {errors.phone ? (
               <span className={styles.fieldError}>{errors.phone}</span>
             ) : null}
@@ -58,12 +75,13 @@ export function SettingsForm({ values }: { values: SettingsValues }) {
               Графік роботи
             </label>
             <input
-              id="workingHours"
-              name="workingHours"
               className={styles.input}
-              defaultValue={values.workingHours}
+              {...form.field("workingHours")}
               placeholder="Пн–Нд, 9:00–20:00"
             />
+            {errors.workingHours ? (
+              <span className={styles.fieldError}>{errors.workingHours}</span>
+            ) : null}
           </div>
         </div>
       </FormSection>
@@ -73,15 +91,13 @@ export function SettingsForm({ values }: { values: SettingsValues }) {
           <label className={styles.label} htmlFor="promoStripText">
             Текст
           </label>
-          <input
-            id="promoStripText"
-            name="promoStripText"
-            className={styles.input}
-            defaultValue={values.promoStripText}
-          />
+          <input className={styles.input} {...form.field("promoStripText")} />
           <span className={styles.hint}>
             Помаранчевий рядок у самому верху сайту.
           </span>
+          {errors.promoStripText ? (
+            <span className={styles.fieldError}>{errors.promoStripText}</span>
+          ) : null}
         </div>
       </FormSection>
 
@@ -90,25 +106,21 @@ export function SettingsForm({ values }: { values: SettingsValues }) {
           <label className={styles.label} htmlFor="heroTitle">
             Заголовок
           </label>
-          <input
-            id="heroTitle"
-            name="heroTitle"
-            className={styles.input}
-            defaultValue={values.heroTitle}
-          />
+          <input className={styles.input} {...form.field("heroTitle")} />
+          {errors.heroTitle ? (
+            <span className={styles.fieldError}>{errors.heroTitle}</span>
+          ) : null}
         </div>
 
         <div className={styles.field}>
           <label className={styles.label} htmlFor="heroTitleAccent">
             Друга частина заголовка
           </label>
-          <input
-            id="heroTitleAccent"
-            name="heroTitleAccent"
-            className={styles.input}
-            defaultValue={values.heroTitleAccent}
-          />
+          <input className={styles.input} {...form.field("heroTitleAccent")} />
           <span className={styles.hint}>Виділяється помаранчевим.</span>
+          {errors.heroTitleAccent ? (
+            <span className={styles.fieldError}>{errors.heroTitleAccent}</span>
+          ) : null}
         </div>
 
         <div className={styles.field}>
@@ -116,11 +128,12 @@ export function SettingsForm({ values }: { values: SettingsValues }) {
             Підзаголовок
           </label>
           <textarea
-            id="heroSubtitle"
-            name="heroSubtitle"
             className={styles.textarea}
-            defaultValue={values.heroSubtitle}
+            {...form.field("heroSubtitle")}
           />
+          {errors.heroSubtitle ? (
+            <span className={styles.fieldError}>{errors.heroSubtitle}</span>
+          ) : null}
         </div>
 
         <div className={styles.grid2}>
@@ -129,12 +142,13 @@ export function SettingsForm({ values }: { values: SettingsValues }) {
               Напис від руки
             </label>
             <input
-              id="heroScript"
-              name="heroScript"
               className={styles.input}
-              defaultValue={values.heroScript}
+              {...form.field("heroScript")}
               placeholder="Смачні торти — це просто!"
             />
+            {errors.heroScript ? (
+              <span className={styles.fieldError}>{errors.heroScript}</span>
+            ) : null}
           </div>
 
           <div className={styles.field}>
@@ -157,24 +171,20 @@ export function SettingsForm({ values }: { values: SettingsValues }) {
           <label className={styles.label} htmlFor="aboutTitle">
             Заголовок
           </label>
-          <input
-            id="aboutTitle"
-            name="aboutTitle"
-            className={styles.input}
-            defaultValue={values.aboutTitle}
-          />
+          <input className={styles.input} {...form.field("aboutTitle")} />
+          {errors.aboutTitle ? (
+            <span className={styles.fieldError}>{errors.aboutTitle}</span>
+          ) : null}
         </div>
 
         <div className={styles.field}>
           <label className={styles.label} htmlFor="aboutText">
             Текст
           </label>
-          <textarea
-            id="aboutText"
-            name="aboutText"
-            className={styles.textarea}
-            defaultValue={values.aboutText}
-          />
+          <textarea className={styles.textarea} {...form.field("aboutText")} />
+          {errors.aboutText ? (
+            <span className={styles.fieldError}>{errors.aboutText}</span>
+          ) : null}
         </div>
 
         <div className={styles.field}>
@@ -182,12 +192,13 @@ export function SettingsForm({ values }: { values: SettingsValues }) {
             Список переваг
           </label>
           <textarea
-            id="aboutBullets"
-            name="aboutBullets"
             className={styles.textarea}
-            defaultValue={values.aboutBullets}
+            {...form.field("aboutBullets")}
           />
           <span className={styles.hint}>По одному пункту в рядку.</span>
+          {errors.aboutBullets ? (
+            <span className={styles.fieldError}>{errors.aboutBullets}</span>
+          ) : null}
         </div>
 
         <div className={styles.field}>

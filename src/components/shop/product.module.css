@@ -257,7 +257,7 @@
   .body,
   .categoryHead,
   /* The skeleton stands in for page content, so it has to match its width. */
-  .skeleton {
+    .skeleton {
     max-width: var(--content-max);
     margin: 0 auto;
   }

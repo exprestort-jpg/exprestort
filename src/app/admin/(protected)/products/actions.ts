@@ -11,6 +11,7 @@ import {
   products,
   productVariants,
 } from "@/db/schema";
+import { productTextSchema } from "@/lib/admin-schemas";
 import { deleteBlobs } from "@/lib/blob";
 import {
   bool,
@@ -37,23 +38,11 @@ const sectionSchema = z.object({
   sort: z.number().int(),
 });
 
-const schema = z.object({
-  title: z.string().min(2, "Вкажіть назву").max(160),
-  slug: z
-    .string()
-    .min(2, "Вкажіть адресу")
-    .max(64)
-    .regex(/^[a-z0-9-]+$/, "Тільки латиниця, цифри та дефіс"),
+const schema = productTextSchema.extend({
   categoryId: z.number().int().positive("Оберіть категорію"),
-  shortDescription: z.string().max(240).optional(),
-  description: z.string().max(4000).optional(),
-  badge: z.string().max(24).optional(),
-  setContents: z.string().max(1000).optional(),
   isActive: z.boolean(),
   isFeatured: z.boolean(),
   sort: z.number().int().min(0).max(9999),
-  seoTitle: z.string().max(180).optional(),
-  seoDescription: z.string().max(320).optional(),
   variants: z.array(variantSchema).min(1, "Додайте хоча б один розмір"),
   sections: z.array(sectionSchema),
 });
@@ -81,6 +70,21 @@ function collectRows(formData: FormData, prefix: string, fields: string[]) {
     .map(([, row]) => row);
 }
 
+/**
+ * Zod reports the parsed shape (`variants.0.priceKop`), but the form renders
+ * the field it owns (`variants.0.price`). Rename so the message lands on the
+ * input the admin can actually fix.
+ */
+function normaliseRowKeys(state: FormState): FormState {
+  if (!state.fieldErrors) return state;
+
+  const fieldErrors: Record<string, string> = {};
+  for (const [key, message] of Object.entries(state.fieldErrors)) {
+    fieldErrors[key.replace(/\.priceKop$/, ".price")] = message;
+  }
+  return { ...state, fieldErrors };
+}
+
 export async function saveProduct(
   _prev: FormState,
   formData: FormData,
@@ -102,7 +106,9 @@ export async function saveProduct(
   for (const [index, row] of variantRows.entries()) {
     const priceKop = toKopiyky(row.price ?? "");
     if (priceKop === null) {
-      return { fieldErrors: { [`variant.${index}.price`]: "Некоректна ціна" } };
+      return {
+        fieldErrors: { [`variants.${index}.price`]: "Некоректна ціна" },
+      };
     }
     variants.push({
       label: row.label ?? "",
@@ -146,7 +152,7 @@ export async function saveProduct(
   });
 
   if (!parsed.success) {
-    const state = toFieldErrors(parsed.error);
+    const state = normaliseRowKeys(toFieldErrors(parsed.error));
     // A missing variant list has no field of its own to attach to.
     if (state.fieldErrors?.variants) {
       return {

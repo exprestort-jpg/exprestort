@@ -1,10 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState, useState } from "react";
+import { useActionState } from "react";
 import { TrustIcon } from "@/components/trust-icon";
+import { trustTextSchema } from "@/lib/admin-schemas";
 import type { FormState } from "@/lib/form";
 import { TRUST_ICONS } from "@/lib/trust-icons";
+import { useAdminForm } from "@/lib/use-admin-form";
 import styles from "../_components/admin.module.css";
 import { saveTrustItem } from "./actions";
 
@@ -30,22 +32,31 @@ export function TrustForm({ values }: { values: TrustFormValues }) {
     saveTrustItem,
     initialState,
   );
-  const [icon, setIcon] = useState(values.icon);
-  const errors = state.fieldErrors ?? {};
+  const form = useAdminForm({
+    initial: {
+      label: values.label,
+      icon: values.icon,
+      scope: values.scope as string,
+      sort: String(values.sort),
+    },
+    schema: trustTextSchema,
+    state,
+  });
+  const { errors } = form;
 
   return (
     <form action={formAction} className={styles.form}>
       {values.id ? <input type="hidden" name="id" value={values.id} /> : null}
+
+      {state.error ? <p className={styles.formError}>{state.error}</p> : null}
 
       <div className={styles.field}>
         <label className={styles.label} htmlFor="label">
           Текст
         </label>
         <input
-          id="label"
-          name="label"
           className={styles.input}
-          defaultValue={values.label}
+          {...form.field("label")}
           placeholder="Випікаємо щодня"
           required
         />
@@ -60,11 +71,8 @@ export function TrustForm({ values }: { values: TrustFormValues }) {
         </label>
         <div className={styles.repeaterHead}>
           <select
-            id="icon"
-            name="icon"
             className={styles.select}
-            value={icon}
-            onChange={(event) => setIcon(event.target.value)}
+            {...form.field("icon")}
             style={{ flex: 1 }}
           >
             {TRUST_ICONS.map((option) => (
@@ -74,7 +82,7 @@ export function TrustForm({ values }: { values: TrustFormValues }) {
             ))}
           </select>
           <span aria-hidden style={{ color: "var(--accent-strong)" }}>
-            <TrustIcon name={icon} size={28} />
+            <TrustIcon name={form.values.icon} size={28} />
           </span>
         </div>
         {errors.icon ? (
@@ -87,12 +95,7 @@ export function TrustForm({ values }: { values: TrustFormValues }) {
           <label className={styles.label} htmlFor="scope">
             Де показувати
           </label>
-          <select
-            id="scope"
-            name="scope"
-            className={styles.select}
-            defaultValue={values.scope}
-          >
+          <select className={styles.select} {...form.field("scope")}>
             <option value="main">Головна сторінка</option>
             <option value="category">Сторінки категорій</option>
           </select>
@@ -103,12 +106,10 @@ export function TrustForm({ values }: { values: TrustFormValues }) {
             Порядок
           </label>
           <input
-            id="sort"
-            name="sort"
             type="number"
             min={0}
             className={styles.input}
-            defaultValue={values.sort}
+            {...form.field("sort")}
           />
         </div>
       </div>

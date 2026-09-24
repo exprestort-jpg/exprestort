@@ -6,16 +6,11 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { db } from "@/db";
 import { trustItems } from "@/db/schema";
+import { trustTextSchema } from "@/lib/admin-schemas";
 import { type FormState, num, str, toFieldErrors } from "@/lib/form";
 import { assertAdmin } from "@/lib/require-admin";
-import { TRUST_ICON_NAMES } from "@/lib/trust-icons";
 
-const schema = z.object({
-  icon: z.enum(TRUST_ICON_NAMES as [string, ...string[]], {
-    message: "Оберіть іконку",
-  }),
-  label: z.string().min(2, "Вкажіть текст").max(80, "Текст задовгий"),
-  scope: z.enum(["main", "category"]),
+const schema = trustTextSchema.extend({
   sort: z.number().int().min(0).max(9999),
 });
 

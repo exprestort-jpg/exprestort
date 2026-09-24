@@ -45,7 +45,7 @@ export function ImageGalleryField({
               <div className={styles.galleryBody}>
                 <input
                   name={`image.${index}.alt`}
-                  defaultValue={image.alt}
+                  value={image.alt}
                   placeholder="Опис фото для пошукових систем"
                   aria-label="Опис фото"
                   style={{

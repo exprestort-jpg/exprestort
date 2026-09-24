@@ -2,8 +2,14 @@
 
 import Link from "next/link";
 import { useActionState, useState } from "react";
+import {
+  productTextSchema,
+  sectionRowSchema,
+  variantRowSchema,
+} from "@/lib/admin-schemas";
 import type { FormState } from "@/lib/form";
 import { slugify } from "@/lib/slug";
+import { fieldError, useAdminForm } from "@/lib/use-admin-form";
 import styles from "../_components/admin.module.css";
 import { FormSection } from "../_components/form-section";
 import {
@@ -72,13 +78,56 @@ export function ProductForm({
     saveProduct,
     initialState,
   );
-  const [title, setTitle] = useState(values.title);
-  const [slug, setSlug] = useState(values.slug);
+  const form = useAdminForm({
+    initial: {
+      title: values.title,
+      slug: values.slug,
+      shortDescription: values.shortDescription,
+      description: values.description,
+      badge: values.badge,
+      setContents: values.setContents,
+      seoTitle: values.seoTitle,
+      seoDescription: values.seoDescription,
+      categoryId: values.categoryId === null ? "" : String(values.categoryId),
+      sort: String(values.sort),
+    },
+    schema: productTextSchema,
+    state,
+  });
   const [slugLocked, setSlugLocked] = useState(Boolean(values.id));
   const [variants, setVariants] = useState<VariantValues[]>(values.variants);
   const [sections, setSections] = useState<SectionValues[]>(values.sections);
+  const [isActive, setIsActive] = useState(values.isActive);
+  const [isFeatured, setIsFeatured] = useState(values.isFeatured);
 
-  const errors = state.fieldErrors ?? {};
+  const { errors, setError } = form;
+  const titleField = form.field("title");
+  const slugField = form.field("slug");
+
+  /*
+   * Repeater rows are validated by hand: their keys carry an index, so they
+   * cannot come from the object schema the rest of the form uses. Same rule as
+   * everywhere else — while typing, re-check only a field that already errors.
+   */
+  function updateRow<T extends Record<string, string>>(
+    rows: T[],
+    setRows: (next: T[]) => void,
+    prefix: "variants" | "sections",
+    rowSchema: typeof variantRowSchema | typeof sectionRowSchema,
+    index: number,
+    key: keyof T & string,
+    value: string,
+    force = false,
+  ) {
+    const next = [...rows];
+    next[index] = { ...next[index], [key]: value };
+    setRows(next);
+
+    const errorKey = `${prefix}.${index}.${key}`;
+    if (force || errors[errorKey]) {
+      setError(errorKey, fieldError(rowSchema, key, value));
+    }
+  }
 
   return (
     <form action={formAction} className={styles.form}>
@@ -91,13 +140,11 @@ export function ProductForm({
           Назва
         </label>
         <input
-          id="title"
-          name="title"
           className={styles.input}
-          value={title}
+          {...titleField}
           onChange={(event) => {
-            setTitle(event.target.value);
-            if (!slugLocked) setSlug(slugify(event.target.value));
+            titleField.onChange(event);
+            if (!slugLocked) form.setValue("slug", slugify(event.target.value));
           }}
           required
         />
@@ -111,17 +158,15 @@ export function ProductForm({
           Адреса сторінки
         </label>
         <input
-          id="slug"
-          name="slug"
           className={styles.input}
-          value={slug}
+          {...slugField}
           onChange={(event) => {
-            setSlug(event.target.value);
+            slugField.onChange(event);
             setSlugLocked(true);
           }}
         />
         <span className={styles.hint}>
-          expresstort.com.ua/product/{slug || "…"}
+          expresstort.com.ua/product/{form.values.slug || "…"}
         </span>
         {errors.slug ? (
           <span className={styles.fieldError}>{errors.slug}</span>
@@ -134,10 +179,8 @@ export function ProductForm({
             Категорія
           </label>
           <select
-            id="categoryId"
-            name="categoryId"
             className={styles.select}
-            defaultValue={values.categoryId ?? ""}
+            {...form.field("categoryId")}
             required
           >
             <option value="" disabled>
@@ -159,10 +202,8 @@ export function ProductForm({
             Позначка на картці
           </label>
           <input
-            id="badge"
-            name="badge"
             className={styles.input}
-            defaultValue={values.badge}
+            {...form.field("badge")}
             list="badge-options"
             placeholder="Без позначки"
           />
@@ -171,6 +212,9 @@ export function ProductForm({
               <option key={badge} value={badge} />
             ))}
           </datalist>
+          {errors.badge ? (
+            <span className={styles.fieldError}>{errors.badge}</span>
+          ) : null}
         </div>
       </div>
 
@@ -178,27 +222,23 @@ export function ProductForm({
         <label className={styles.label} htmlFor="shortDescription">
           Короткий опис
         </label>
-        <input
-          id="shortDescription"
-          name="shortDescription"
-          className={styles.input}
-          defaultValue={values.shortDescription}
-        />
+        <input className={styles.input} {...form.field("shortDescription")} />
         <span className={styles.hint}>
           Один рядок під назвою на картці товару.
         </span>
+        {errors.shortDescription ? (
+          <span className={styles.fieldError}>{errors.shortDescription}</span>
+        ) : null}
       </div>
 
       <div className={styles.field}>
         <label className={styles.label} htmlFor="description">
           Опис
         </label>
-        <textarea
-          id="description"
-          name="description"
-          className={styles.textarea}
-          defaultValue={values.description}
-        />
+        <textarea className={styles.textarea} {...form.field("description")} />
+        {errors.description ? (
+          <span className={styles.fieldError}>{errors.description}</span>
+        ) : null}
       </div>
 
       <div className={styles.field}>
@@ -206,15 +246,16 @@ export function ProductForm({
           Склад набору
         </label>
         <textarea
-          id="setContents"
-          name="setContents"
           className={styles.textarea}
-          defaultValue={values.setContents}
+          {...form.field("setContents")}
           placeholder={"Коржі 10 шт\nПосипка\nПідложка для торта"}
         />
         <span className={styles.hint}>
           По одному пункту в рядку. Порожньо — блок не показується.
         </span>
+        {errors.setContents ? (
+          <span className={styles.fieldError}>{errors.setContents}</span>
+        ) : null}
       </div>
 
       <FormSection
@@ -232,7 +273,30 @@ export function ProductForm({
               <input
                 name={`variant.${index}.label`}
                 className={styles.input}
-                defaultValue={variant.label}
+                value={variant.label}
+                onChange={(event) =>
+                  updateRow(
+                    variants,
+                    setVariants,
+                    "variants",
+                    variantRowSchema,
+                    index,
+                    "label",
+                    event.target.value,
+                  )
+                }
+                onBlur={(event) =>
+                  updateRow(
+                    variants,
+                    setVariants,
+                    "variants",
+                    variantRowSchema,
+                    index,
+                    "label",
+                    event.target.value,
+                    true,
+                  )
+                }
                 placeholder="Ø 20 см"
                 aria-label="Розмір"
               />
@@ -245,7 +309,18 @@ export function ProductForm({
             <input
               name={`variant.${index}.weightLabel`}
               className={styles.input}
-              defaultValue={variant.weightLabel}
+              value={variant.weightLabel}
+              onChange={(event) =>
+                updateRow(
+                  variants,
+                  setVariants,
+                  "variants",
+                  variantRowSchema,
+                  index,
+                  "weightLabel",
+                  event.target.value,
+                )
+              }
               placeholder="600–650 г"
               aria-label="Вага"
             />
@@ -253,14 +328,37 @@ export function ProductForm({
               <input
                 name={`variant.${index}.price`}
                 className={styles.input}
-                defaultValue={variant.price}
+                value={variant.price}
+                onChange={(event) =>
+                  updateRow(
+                    variants,
+                    setVariants,
+                    "variants",
+                    variantRowSchema,
+                    index,
+                    "price",
+                    event.target.value,
+                  )
+                }
+                onBlur={(event) =>
+                  updateRow(
+                    variants,
+                    setVariants,
+                    "variants",
+                    variantRowSchema,
+                    index,
+                    "price",
+                    event.target.value,
+                    true,
+                  )
+                }
                 placeholder="450"
                 inputMode="decimal"
                 aria-label="Ціна, ₴"
               />
-              {errors[`variant.${index}.price`] ? (
+              {errors[`variants.${index}.price`] ? (
                 <span className={styles.fieldError}>
-                  {errors[`variant.${index}.price`]}
+                  {errors[`variants.${index}.price`]}
                 </span>
               ) : null}
             </div>
@@ -302,7 +400,30 @@ export function ProductForm({
               <input
                 name={`section.${index}.title`}
                 className={styles.input}
-                defaultValue={section.title}
+                value={section.title}
+                onChange={(event) =>
+                  updateRow(
+                    sections,
+                    setSections,
+                    "sections",
+                    sectionRowSchema,
+                    index,
+                    "title",
+                    event.target.value,
+                  )
+                }
+                onBlur={(event) =>
+                  updateRow(
+                    sections,
+                    setSections,
+                    "sections",
+                    sectionRowSchema,
+                    index,
+                    "title",
+                    event.target.value,
+                    true,
+                  )
+                }
                 placeholder="Склад"
                 aria-label="Заголовок розділу"
                 style={{ flex: 1 }}
@@ -317,13 +438,46 @@ export function ProductForm({
                 Прибрати
               </button>
             </div>
+            {errors[`sections.${index}.title`] ? (
+              <span className={styles.fieldError}>
+                {errors[`sections.${index}.title`]}
+              </span>
+            ) : null}
             <textarea
               name={`section.${index}.body`}
               className={styles.textarea}
-              defaultValue={section.body}
+              value={section.body}
+              onChange={(event) =>
+                updateRow(
+                  sections,
+                  setSections,
+                  "sections",
+                  sectionRowSchema,
+                  index,
+                  "body",
+                  event.target.value,
+                )
+              }
+              onBlur={(event) =>
+                updateRow(
+                  sections,
+                  setSections,
+                  "sections",
+                  sectionRowSchema,
+                  index,
+                  "body",
+                  event.target.value,
+                  true,
+                )
+              }
               placeholder="Текст розділу"
               aria-label="Текст розділу"
             />
+            {errors[`sections.${index}.body`] ? (
+              <span className={styles.fieldError}>
+                {errors[`sections.${index}.body`]}
+              </span>
+            ) : null}
           </div>
         ))}
 
@@ -343,12 +497,10 @@ export function ProductForm({
               Порядок
             </label>
             <input
-              id="sort"
-              name="sort"
               type="number"
               min={0}
               className={styles.input}
-              defaultValue={values.sort}
+              {...form.field("sort")}
             />
           </div>
 
@@ -359,7 +511,8 @@ export function ProductForm({
                 id="isActive"
                 name="isActive"
                 type="checkbox"
-                defaultChecked={values.isActive}
+                checked={isActive}
+                onChange={(event) => setIsActive(event.target.checked)}
               />
               <span>Показувати на сайті</span>
             </label>
@@ -368,7 +521,8 @@ export function ProductForm({
                 id="isFeatured"
                 name="isFeatured"
                 type="checkbox"
-                defaultChecked={values.isFeatured}
+                checked={isFeatured}
+                onChange={(event) => setIsFeatured(event.target.checked)}
               />
               <span>Закріпити в «Популярне»</span>
             </label>
@@ -379,12 +533,10 @@ export function ProductForm({
           <label className={styles.label} htmlFor="seoTitle">
             SEO заголовок
           </label>
-          <input
-            id="seoTitle"
-            name="seoTitle"
-            className={styles.input}
-            defaultValue={values.seoTitle}
-          />
+          <input className={styles.input} {...form.field("seoTitle")} />
+          {errors.seoTitle ? (
+            <span className={styles.fieldError}>{errors.seoTitle}</span>
+          ) : null}
         </div>
 
         <div className={styles.field}>
@@ -392,11 +544,12 @@ export function ProductForm({
             SEO опис
           </label>
           <textarea
-            id="seoDescription"
-            name="seoDescription"
             className={styles.textarea}
-            defaultValue={values.seoDescription}
+            {...form.field("seoDescription")}
           />
+          {errors.seoDescription ? (
+            <span className={styles.fieldError}>{errors.seoDescription}</span>
+          ) : null}
         </div>
       </FormSection>
 

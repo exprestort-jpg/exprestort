@@ -1,27 +1,14 @@
 "use server";
 
 import { updateTag } from "next/cache";
-import { z } from "zod";
 import { db } from "@/db";
 import { siteSettings } from "@/db/schema";
+import { settingsTextSchema } from "@/lib/admin-schemas";
 import { deleteBlobs } from "@/lib/blob";
 import { type FormState, str, toFieldErrors } from "@/lib/form";
 import { assertAdmin } from "@/lib/require-admin";
 
-const schema = z.object({
-  phone: z.string().min(5, "Вкажіть телефон").max(32),
-  workingHours: z.string().max(160),
-  promoStripText: z.string().max(160),
-  heroTitle: z.string().max(160),
-  heroTitleAccent: z.string().max(160),
-  heroSubtitle: z.string().max(320),
-  heroScript: z.string().max(80),
-  heroImageUrl: z.string().url("Некоректне посилання").or(z.literal("")),
-  aboutTitle: z.string().max(160),
-  aboutText: z.string().max(2000),
-  aboutBullets: z.string().max(1000),
-  aboutImageUrl: z.string().url("Некоректне посилання").or(z.literal("")),
-});
+const schema = settingsTextSchema;
 
 export async function saveSettings(
   _prev: FormState,

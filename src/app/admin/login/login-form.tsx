@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { type LoginState, loginAction } from "./actions";
 import styles from "./login.module.css";
 
@@ -11,6 +11,13 @@ export function LoginForm() {
     loginAction,
     initialState,
   );
+  /*
+   * Controlled so a rejected sign-in leaves both fields as typed: React clears
+   * uncontrolled inputs once a form action settles, and retyping an email after
+   * a mistyped password is pure friction.
+   */
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   return (
     <form action={formAction} className={styles.form}>
@@ -27,6 +34,8 @@ export function LoginForm() {
         autoComplete="username"
         required
         className={styles.input}
+        value={email}
+        onChange={(event) => setEmail(event.target.value)}
       />
 
       <label className={styles.label} htmlFor="password">
@@ -39,6 +48,8 @@ export function LoginForm() {
         autoComplete="current-password"
         required
         className={styles.input}
+        value={password}
+        onChange={(event) => setPassword(event.target.value)}
       />
 
       {state.error ? (

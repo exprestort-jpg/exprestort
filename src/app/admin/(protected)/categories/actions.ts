@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { db } from "@/db";
 import { categories } from "@/db/schema";
+import { categoryTextSchema } from "@/lib/admin-schemas";
 import { deleteBlobs } from "@/lib/blob";
 import {
   bool,
@@ -19,19 +20,9 @@ import {
 import { assertAdmin } from "@/lib/require-admin";
 import { slugify } from "@/lib/slug";
 
-const schema = z.object({
-  title: z.string().min(2, "Вкажіть назву").max(120, "Назва задовга"),
-  slug: z
-    .string()
-    .min(2, "Вкажіть адресу")
-    .max(64, "Адреса задовга")
-    .regex(/^[a-z0-9-]+$/, "Тільки латиниця, цифри та дефіс"),
-  description: z.string().max(2000).optional(),
-  imageUrl: z.string().url("Некоректне посилання").or(z.literal("")).optional(),
+const schema = categoryTextSchema.extend({
   sort: z.number().int().min(0).max(9999),
   isActive: z.boolean(),
-  seoTitle: z.string().max(180).optional(),
-  seoDescription: z.string().max(320).optional(),
 });
 
 export async function saveCategory(

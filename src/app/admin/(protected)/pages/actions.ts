@@ -3,9 +3,9 @@
 import { eq } from "drizzle-orm";
 import { updateTag } from "next/cache";
 import { redirect } from "next/navigation";
-import { z } from "zod";
 import { db } from "@/db";
 import { pages } from "@/db/schema";
+import { pageTextSchema } from "@/lib/admin-schemas";
 import {
   type FormState,
   isUniqueViolation,
@@ -16,17 +16,7 @@ import { assertAdmin } from "@/lib/require-admin";
 import { sanitizePageHtml } from "@/lib/sanitize";
 import { slugify } from "@/lib/slug";
 
-const schema = z.object({
-  title: z.string().min(2, "Вкажіть заголовок").max(160),
-  slug: z
-    .string()
-    .min(2, "Вкажіть адресу")
-    .max(64)
-    .regex(/^[a-z0-9-]+$/, "Тільки латиниця, цифри та дефіс"),
-  body: z.string().max(80_000),
-  seoTitle: z.string().max(180).optional(),
-  seoDescription: z.string().max(320).optional(),
-});
+const schema = pageTextSchema;
 
 export async function savePage(
   _prev: FormState,

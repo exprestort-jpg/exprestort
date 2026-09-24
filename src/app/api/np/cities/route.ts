@@ -6,7 +6,6 @@ export async function GET(request: NextRequest) {
   if (query.length < 2) return Response.json({ cities: [] });
 
   const result = await searchCities(query);
-  console.log("--> result", result);
   if (!result.ok) return npFailureResponse(result.reason, "cities");
 
   return Response.json({ cities: result.data });

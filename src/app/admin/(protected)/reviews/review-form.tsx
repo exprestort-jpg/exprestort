@@ -2,7 +2,9 @@
 
 import Link from "next/link";
 import { useActionState } from "react";
+import { reviewTextSchema } from "@/lib/admin-schemas";
 import type { FormState } from "@/lib/form";
+import { useAdminForm } from "@/lib/use-admin-form";
 import styles from "../_components/admin.module.css";
 import { ImageField } from "../_components/image-field";
 import { saveReview } from "./actions";
@@ -28,24 +30,30 @@ const initialState: FormState = {};
 
 export function ReviewForm({ values }: { values: ReviewFormValues }) {
   const [state, formAction, pending] = useActionState(saveReview, initialState);
-  const errors = state.fieldErrors ?? {};
+  const form = useAdminForm({
+    initial: {
+      author: values.author,
+      text: values.text,
+      rating: String(values.rating),
+      sort: String(values.sort),
+    },
+    schema: reviewTextSchema,
+    state,
+  });
+  const { errors } = form;
 
   return (
     <form action={formAction} className={styles.form}>
       {values.id ? <input type="hidden" name="id" value={values.id} /> : null}
+
+      {state.error ? <p className={styles.formError}>{state.error}</p> : null}
 
       <div className={styles.grid2}>
         <div className={styles.field}>
           <label className={styles.label} htmlFor="author">
             Ім&apos;я
           </label>
-          <input
-            id="author"
-            name="author"
-            className={styles.input}
-            defaultValue={values.author}
-            required
-          />
+          <input className={styles.input} {...form.field("author")} required />
           {errors.author ? (
             <span className={styles.fieldError}>{errors.author}</span>
           ) : null}
@@ -55,12 +63,7 @@ export function ReviewForm({ values }: { values: ReviewFormValues }) {
           <label className={styles.label} htmlFor="rating">
             Оцінка
           </label>
-          <select
-            id="rating"
-            name="rating"
-            className={styles.select}
-            defaultValue={String(values.rating)}
-          >
+          <select className={styles.select} {...form.field("rating")}>
             {[5, 4, 3, 2, 1].map((value) => (
               <option key={value} value={value}>
                 {"★".repeat(value)}
@@ -75,10 +78,8 @@ export function ReviewForm({ values }: { values: ReviewFormValues }) {
           Текст відгуку
         </label>
         <textarea
-          id="text"
-          name="text"
           className={styles.textarea}
-          defaultValue={values.text}
+          {...form.field("text")}
           required
         />
         {errors.text ? (
@@ -106,12 +107,10 @@ export function ReviewForm({ values }: { values: ReviewFormValues }) {
             Порядок
           </label>
           <input
-            id="sort"
-            name="sort"
             type="number"
             min={0}
             className={styles.input}
-            defaultValue={values.sort}
+            {...form.field("sort")}
           />
         </div>
       </div>
