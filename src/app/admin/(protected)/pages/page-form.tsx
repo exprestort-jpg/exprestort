@@ -47,10 +47,15 @@ export function PageForm({ values }: { values: PageFormValues }) {
   const titleField = form.field("title");
   const slugField = form.field("slug");
 
+  const rowId = state.savedId ?? values.id;
+
   return (
     <form action={formAction} className={styles.form} style={{ maxWidth: 760 }}>
-      {values.id ? <input type="hidden" name="id" value={values.id} /> : null}
+      {/* After a create the row id only exists in the action result; adopting
+          it keeps the next save an update instead of a second insert. */}
+      {rowId ? <input type="hidden" name="id" value={rowId} /> : null}
 
+      {state.saved ? <p className={styles.savedNote}>Збережено.</p> : null}
       {state.error ? <p className={styles.formError}>{state.error}</p> : null}
 
       <div className={styles.field}>
@@ -62,7 +67,11 @@ export function PageForm({ values }: { values: PageFormValues }) {
           {...titleField}
           onChange={(event) => {
             titleField.onChange(event);
-            if (!slugLocked) form.setValue("slug", slugify(event.target.value));
+            // rowId means the row exists now, so the slug is live and must not
+            // keep following the title.
+            if (!slugLocked && !rowId) {
+              form.setValue("slug", slugify(event.target.value));
+            }
           }}
           required
         />

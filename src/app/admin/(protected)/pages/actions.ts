@@ -47,11 +47,16 @@ export async function savePage(
     updatedAt: new Date(),
   };
 
+  let savedId = id;
   try {
-    if (id) {
-      await db.update(pages).set(values).where(eq(pages.id, id));
+    if (savedId) {
+      await db.update(pages).set(values).where(eq(pages.id, savedId));
     } else {
-      await db.insert(pages).values(values);
+      const [inserted] = await db
+        .insert(pages)
+        .values(values)
+        .returning({ id: pages.id });
+      savedId = inserted.id;
     }
   } catch (error) {
     if (isUniqueViolation(error)) {
@@ -61,7 +66,8 @@ export async function savePage(
   }
 
   updateTag("pages");
-  redirect("/admin/pages");
+  // No redirect — the admin stays on the form and sees a confirmation instead.
+  return { saved: true, savedId };
 }
 
 export async function deletePage(formData: FormData): Promise<void> {

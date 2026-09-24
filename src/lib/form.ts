@@ -5,6 +5,11 @@ export type FormState = {
   fieldErrors?: Record<string, string>;
   /** Set by forms that stay on the page instead of redirecting after a save. */
   saved?: boolean;
+  /**
+   * Row id after a successful save. A create has no id in the form, so the
+   * View adopts this one and the next save updates instead of inserting again.
+   */
+  savedId?: number;
 };
 
 /** Flattens a Zod error into one message per field, which is all the UI shows. */

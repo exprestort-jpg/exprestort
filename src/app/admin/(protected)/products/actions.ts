@@ -191,6 +191,7 @@ export async function saveProduct(
       ).map((row) => row.url)
     : [];
 
+  let savedId = id;
   try {
     await withTransaction(async (tx) => {
       let productId = id;
@@ -215,6 +216,8 @@ export async function saveProduct(
           .returning({ id: products.id });
         productId = inserted.id;
       }
+
+      savedId = productId;
 
       await tx.insert(productVariants).values(
         data.variants.map((variant) => ({
@@ -259,7 +262,8 @@ export async function saveProduct(
   await deleteBlobs(previousImageUrls.filter((url) => !keptUrls.has(url)));
 
   updateTag("products");
-  redirect("/admin/products");
+  // No redirect — the admin stays on the form and sees a confirmation instead.
+  return { saved: true, savedId: savedId ?? undefined };
 }
 
 export async function deleteProduct(formData: FormData): Promise<void> {

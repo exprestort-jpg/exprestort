@@ -72,11 +72,16 @@ export async function saveCategory(
       )[0]?.imageUrl
     : null;
 
+  let savedId = id;
   try {
-    if (id) {
-      await db.update(categories).set(values).where(eq(categories.id, id));
+    if (savedId) {
+      await db.update(categories).set(values).where(eq(categories.id, savedId));
     } else {
-      await db.insert(categories).values(values);
+      const [inserted] = await db
+        .insert(categories)
+        .values(values)
+        .returning({ id: categories.id });
+      savedId = inserted.id;
     }
   } catch (error) {
     if (isUniqueViolation(error)) {
@@ -92,7 +97,8 @@ export async function saveCategory(
   // updateTag so the admin sees its own write immediately; the storefront picks
   // the change up through the same tag.
   updateTag("categories");
-  redirect("/admin/categories");
+  // No redirect — the admin stays on the form and sees a confirmation instead.
+  return { saved: true, savedId };
 }
 
 export async function deleteCategory(formData: FormData): Promise<void> {

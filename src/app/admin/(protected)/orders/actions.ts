@@ -1,7 +1,7 @@
 "use server";
 
 import { eq } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
+import { refresh } from "next/cache";
 import { z } from "zod";
 import { db } from "@/db";
 import { orders } from "@/db/schema";
@@ -28,7 +28,8 @@ export async function updateOrderStatus(
     .set({ status: parsed.data.status })
     .where(eq(orders.id, parsed.data.id));
 
-  // Orders are never cached for the storefront, so only the admin views refresh.
-  revalidatePath("/admin/orders");
-  revalidatePath(`/admin/orders/${parsed.data.id}`);
+  // Nothing about orders is cached on the server, so there is no tag to expire.
+  // The stale copy lives in the browser's client router cache: without this the
+  // order page the manager navigates back into still shows the old status.
+  refresh();
 }

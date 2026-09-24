@@ -39,14 +39,20 @@ export async function saveTrustItem(
     sort: parsed.data.sort,
   };
 
-  if (id) {
-    await db.update(trustItems).set(values).where(eq(trustItems.id, id));
+  let savedId = id;
+  if (savedId) {
+    await db.update(trustItems).set(values).where(eq(trustItems.id, savedId));
   } else {
-    await db.insert(trustItems).values(values);
+    const [inserted] = await db
+      .insert(trustItems)
+      .values(values)
+      .returning({ id: trustItems.id });
+    savedId = inserted.id;
   }
 
   updateTag("trust");
-  redirect("/admin/trust");
+  // No redirect — the admin stays on the form and sees a confirmation instead.
+  return { saved: true, savedId };
 }
 
 export async function deleteTrustItem(formData: FormData): Promise<void> {

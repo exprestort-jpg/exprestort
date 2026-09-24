@@ -53,10 +53,15 @@ export async function saveReview(
       )[0]?.avatarUrl
     : null;
 
-  if (id) {
-    await db.update(reviews).set(values).where(eq(reviews.id, id));
+  let savedId = id;
+  if (savedId) {
+    await db.update(reviews).set(values).where(eq(reviews.id, savedId));
   } else {
-    await db.insert(reviews).values(values);
+    const [inserted] = await db
+      .insert(reviews)
+      .values(values)
+      .returning({ id: reviews.id });
+    savedId = inserted.id;
   }
 
   if (previousAvatarUrl && previousAvatarUrl !== values.avatarUrl) {
@@ -64,7 +69,8 @@ export async function saveReview(
   }
 
   updateTag("reviews");
-  redirect("/admin/reviews");
+  // No redirect — the admin stays on the form and sees a confirmation instead.
+  return { saved: true, savedId };
 }
 
 export async function deleteReview(formData: FormData): Promise<void> {

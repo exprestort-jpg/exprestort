@@ -44,10 +44,15 @@ export function TrustForm({ values }: { values: TrustFormValues }) {
   });
   const { errors } = form;
 
+  const rowId = state.savedId ?? values.id;
+
   return (
     <form action={formAction} className={styles.form}>
-      {values.id ? <input type="hidden" name="id" value={values.id} /> : null}
+      {/* After a create the row id only exists in the action result; adopting
+          it keeps the next save an update instead of a second insert. */}
+      {rowId ? <input type="hidden" name="id" value={rowId} /> : null}
 
+      {state.saved ? <p className={styles.savedNote}>Збережено.</p> : null}
       {state.error ? <p className={styles.formError}>{state.error}</p> : null}
 
       <div className={styles.field}>
