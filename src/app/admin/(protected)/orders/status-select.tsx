@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useOptimistic, useTransition } from "react";
 import {
   ORDER_STATUS_LABELS,
   ORDER_STATUSES,
@@ -10,7 +10,10 @@ import styles from "../_components/admin.module.css";
 import { updateOrderStatus } from "./actions";
 
 /** Changing the value submits immediately — a separate Save button for one
- *  dropdown is friction the manager does not need. */
+ *  dropdown is friction the manager does not need. The select is controlled by
+ *  an optimistic value because React resets uncontrolled form fields as soon as
+ *  an action settles, which would flash the old status until the RSC refresh
+ *  arrives. */
 export function StatusSelect({
   id,
   status,
@@ -18,24 +21,29 @@ export function StatusSelect({
   id: number;
   status: OrderStatus;
 }) {
-  const formRef = useRef<HTMLFormElement>(null);
+  const [isPending, startTransition] = useTransition();
+  const [optimisticStatus, setOptimisticStatus] = useOptimistic(status);
 
   return (
-    <form ref={formRef} action={updateOrderStatus}>
-      <input type="hidden" name="id" value={id} />
-      <select
-        name="status"
-        className={styles.select}
-        defaultValue={status}
-        onChange={() => formRef.current?.requestSubmit()}
-        aria-label="Статус замовлення"
-      >
-        {ORDER_STATUSES.map((value) => (
-          <option key={value} value={value}>
-            {ORDER_STATUS_LABELS[value]}
-          </option>
-        ))}
-      </select>
-    </form>
+    <select
+      name="status"
+      className={styles.select}
+      value={optimisticStatus}
+      disabled={isPending}
+      onChange={(event) => {
+        const next = event.target.value as OrderStatus;
+        startTransition(async () => {
+          setOptimisticStatus(next);
+          await updateOrderStatus(id, next);
+        });
+      }}
+      aria-label="Статус замовлення"
+    >
+      {ORDER_STATUSES.map((value) => (
+        <option key={value} value={value}>
+          {ORDER_STATUS_LABELS[value]}
+        </option>
+      ))}
+    </select>
   );
 }

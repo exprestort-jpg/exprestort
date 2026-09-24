@@ -5,7 +5,6 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { db } from "@/db";
 import { orders } from "@/db/schema";
-import { str } from "@/lib/form";
 import { ORDER_STATUSES } from "@/lib/orders";
 import { assertAdmin } from "@/lib/require-admin";
 
@@ -14,13 +13,13 @@ const schema = z.object({
   status: z.enum(ORDER_STATUSES),
 });
 
-export async function updateOrderStatus(formData: FormData): Promise<void> {
+export async function updateOrderStatus(
+  id: number,
+  status: string,
+): Promise<void> {
   await assertAdmin();
 
-  const parsed = schema.safeParse({
-    id: Number(str(formData, "id")),
-    status: str(formData, "status"),
-  });
+  const parsed = schema.safeParse({ id, status });
 
   if (!parsed.success) return;
 
