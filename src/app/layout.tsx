@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Caveat, Manrope, Playfair_Display } from "next/font/google";
+import { siteUrl } from "@/lib/site";
 import "./globals.css";
 
 const manrope = Manrope({
@@ -20,10 +21,27 @@ const caveat = Caveat({
   display: "swap",
 });
 
+const title = "Експрес-торт — крафтові коржі для домашніх тортів";
+const description =
+  "Бісквітні, медові та шоколадні коржі власного випікання. Відправляємо Новою Поштою того ж дня.";
+
 export const metadata: Metadata = {
-  title: "Експрес-торт — крафтові коржі для домашніх тортів",
-  description:
-    "Бісквітні, медові та шоколадні коржі власного випікання. Відправляємо Новою Поштою того ж дня.",
+  metadataBase: new URL(siteUrl()),
+  title,
+  description,
+  openGraph: {
+    type: "website",
+    locale: "uk_UA",
+    siteName: "Експрес-торт",
+    url: siteUrl(),
+    title,
+    description,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title,
+    description,
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
