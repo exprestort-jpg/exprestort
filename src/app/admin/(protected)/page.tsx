@@ -10,7 +10,8 @@ export default async function AdminHomePage() {
     <>
       <h1>Вітаємо, {user.name}</h1>
       <p style={{ color: "var(--text-secondary)", marginTop: "var(--s-8)" }}>
-        Розділи адмінпанелі з&apos;являться тут на наступному кроці.
+        Оберіть розділ у меню зліва: товари, категорії, замовлення, відгуки,
+        переваги, сторінки та налаштування.
       </p>
     </>
   );
