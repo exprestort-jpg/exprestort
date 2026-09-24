@@ -60,6 +60,7 @@ export async function getMenuCategories() {
 
 type ProductCardRow = {
   id: number;
+  categoryId: number;
   slug: string;
   title: string;
   shortDescription: string | null;
@@ -74,6 +75,7 @@ function productCardSelect() {
   return db
     .select({
       id: products.id,
+      categoryId: products.categoryId,
       slug: products.slug,
       title: products.title,
       shortDescription: products.shortDescription,
@@ -216,6 +218,56 @@ export async function getCategoryProducts(
     .orderBy(asc(products.sort), asc(products.title));
 }
 
+export type CatalogSection = {
+  id: number;
+  slug: string;
+  title: string;
+  description: string | null;
+  products: ProductCardRow[];
+};
+
+/**
+ * Every active product, grouped under its category — the «всі коржі» page.
+ * Two reads and an in-memory group instead of one query per category, so the
+ * page costs the same whether the shop has three categories or thirty.
+ */
+export async function getCatalogSections(): Promise<CatalogSection[]> {
+  "use cache";
+  cacheLife("max");
+  cacheTag("categories", "products");
+
+  const [categoryRows, productRows] = await Promise.all([
+    db
+      .select({
+        id: categories.id,
+        slug: categories.slug,
+        title: categories.title,
+        description: categories.description,
+      })
+      .from(categories)
+      .where(eq(categories.isActive, true))
+      .orderBy(asc(categories.sort), asc(categories.title)),
+    productCardSelect()
+      .where(eq(products.isActive, true))
+      .groupBy(products.id)
+      .orderBy(asc(products.sort), asc(products.title)),
+  ]);
+
+  const byCategory = new Map<number, ProductCardRow[]>();
+  for (const product of productRows) {
+    const bucket = byCategory.get(product.categoryId);
+    if (bucket) bucket.push(product);
+    else byCategory.set(product.categoryId, [product]);
+  }
+
+  return categoryRows
+    .map((category) => ({
+      ...category,
+      products: byCategory.get(category.id) ?? [],
+    }))
+    .filter((section) => section.products.length > 0);
+}
+
 export async function getProductBySlug(slug: string) {
   "use cache";
   cacheLife("max");
@@ -330,4 +382,29 @@ export function toLines(value: string | null | undefined): string[] {
     .split("\n")
     .map((line) => line.trim())
     .filter(Boolean);
+}
+
+/**
+ * Slugs + last-modified stamps for the sitemap. One cached read per entity so
+ * a crawler hit never wakes Neon; tagged like every other storefront query, so
+ * an admin save refreshes the sitemap along with the pages it lists.
+ */
+export async function getSitemapEntries() {
+  "use cache";
+  cacheLife("max");
+  cacheTag("products", "categories", "pages");
+
+  const [productRows, categoryRows, pageRows] = await Promise.all([
+    db
+      .select({ slug: products.slug, updatedAt: products.updatedAt })
+      .from(products)
+      .where(eq(products.isActive, true)),
+    db
+      .select({ slug: categories.slug, updatedAt: categories.updatedAt })
+      .from(categories)
+      .where(eq(categories.isActive, true)),
+    db.select({ slug: pages.slug, updatedAt: pages.updatedAt }).from(pages),
+  ]);
+
+  return { products: productRows, categories: categoryRows, pages: pageRows };
 }

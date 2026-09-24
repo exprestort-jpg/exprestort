@@ -106,7 +106,7 @@ export default async function HomePage() {
         <section className={styles.section}>
           <div className={styles.sectionHeader}>
             <h2 className={styles.sectionTitle}>Популярне</h2>
-            <Link href="/catalog" className={styles.sectionLink}>
+            <Link href="/products" className={styles.sectionLink}>
               всі коржі
               <ArrowRight size={14} strokeWidth={2} aria-hidden />
             </Link>
