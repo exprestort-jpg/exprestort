@@ -8,7 +8,6 @@ import styles from "./chrome.module.css";
  *  the phone and the working hours come from the database. */
 const INFO_LINKS = [
   { href: "/about", label: "Про нас" },
-  { href: "/offer", label: "Публічна оферта" },
   { href: "/privacy", label: "Політика конфіденційності" },
 ];
 
