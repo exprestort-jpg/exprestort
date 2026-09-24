@@ -74,6 +74,16 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/*
+ * The body is a flex column, so the main region absorbs whatever height is
+ * left over — short pages push the footer to the bottom of the viewport
+ * instead of leaving a white gap under it. `0 auto` rather than `1` so tall
+ * content still grows past the viewport.
+ */
+body > main {
+  flex: 1 0 auto;
+}
+
 h1,
 h2,
 h3 {

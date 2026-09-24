@@ -10,21 +10,19 @@ export function CategoryTile({
 }) {
   return (
     <Link href={`/catalog/${category.slug}`} className={styles.tile}>
-      <div className={styles.tilePhoto}>
-        {category.imageUrl ? (
-          <Image
-            src={category.imageUrl}
-            alt={category.title}
-            fill
-            sizes="(min-width: 768px) 200px, 33vw"
-            style={{ objectFit: "cover" }}
-          />
-        ) : null}
-      </div>
-      <div className={styles.tileBottom}>
+      {category.imageUrl ? (
+        <Image
+          src={category.imageUrl}
+          alt={category.title}
+          fill
+          sizes="(min-width: 768px) 200px, 50vw"
+          className={styles.tileImage}
+        />
+      ) : null}
+      <div className={styles.tileOverlay}>
         <span className={styles.tileLabel}>{category.title}</span>
         <span className={styles.tileArrow} aria-hidden>
-          <ArrowRight size={13} strokeWidth={2.5} />
+          <ArrowRight size={14} strokeWidth={2.5} />
         </span>
       </div>
     </Link>

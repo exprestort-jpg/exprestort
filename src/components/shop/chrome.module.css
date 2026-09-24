@@ -92,18 +92,72 @@
   inset: 0;
   z-index: 40;
   background: rgba(42, 26, 16, 0.4);
+  animation: menuFadeIn 180ms ease-out;
 }
 
+/*
+ * Left drawer rather than a full-screen sheet: the uncovered strip on the right
+ * is the overlay, and tapping it closes the menu.
+ */
 .menuPanel {
   position: fixed;
-  inset: 0;
+  inset: 0 auto 0 0;
   z-index: 50;
   display: flex;
   flex-direction: column;
   gap: var(--s-16);
+  width: min(320px, 84vw);
   padding: var(--s-20) var(--gutter) var(--s-24);
   background: var(--surface);
+  box-shadow: 0 0 32px rgba(42, 26, 16, 0.18);
   overflow-y: auto;
+  animation: menuSlideIn 200ms ease-out;
+}
+
+/* Exit: the panel stays mounted until these finish (see SiteHeader). */
+.menuOverlayClosing {
+  animation: menuFadeOut 180ms ease-in forwards;
+}
+
+.menuPanelClosing {
+  animation: menuSlideOut 200ms ease-in forwards;
+}
+
+@keyframes menuFadeIn {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes menuFadeOut {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes menuSlideIn {
+  from {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes menuSlideOut {
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+/*
+ * Near-zero rather than `animation: none`: the close handler unmounts the panel
+ * on animationend, and that event never fires for a removed animation.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .menuOverlay,
+  .menuPanel,
+  .menuOverlayClosing,
+  .menuPanelClosing {
+    animation-duration: 1ms;
+  }
 }
 
 .menuTop {
@@ -280,6 +334,10 @@
   .footer {
     padding-left: max(var(--gutter), calc((100vw - var(--content-max)) / 2));
     padding-right: max(var(--gutter), calc((100vw - var(--content-max)) / 2));
+  }
+
+  .menuPanel {
+    width: 360px;
   }
 
   .footerColumns {

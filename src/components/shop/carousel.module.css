@@ -1,0 +1,124 @@
+.root {
+  position: relative;
+}
+
+/*
+ * On mobile the track cancels the section gutter and re-applies it as its own
+ * padding, so cards pass under both screen edges while scrolling but still sit
+ * inset at rest. Padding on the scroll container scrolls away with content;
+ * padding on the section would clip mid-scroll.
+ */
+.viewport {
+  margin: 0 calc(var(--gutter) * -1);
+}
+
+.track {
+  display: flex;
+  gap: var(--s-12);
+  overflow-x: auto;
+  padding: 0 var(--gutter);
+  scroll-snap-type: x proximity;
+  scroll-padding-left: var(--gutter);
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+}
+
+.track::-webkit-scrollbar {
+  display: none;
+}
+
+.track:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.track > * {
+  flex: 0 0 var(--slide);
+  width: var(--slide);
+  scroll-snap-align: start;
+}
+
+.dragging {
+  cursor: grabbing;
+  scroll-snap-type: none;
+  user-select: none;
+}
+
+/* Desktop only — touch swipes the track, and the arrows would cover cards. */
+.arrow {
+  display: none;
+  position: absolute;
+  top: 50%;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  transform: translateY(-50%);
+  border: 1px solid var(--border);
+  border-radius: var(--r-pill);
+  background: var(--surface);
+  color: var(--text-primary);
+  box-shadow: 0 6px 18px rgba(74, 56, 44, 0.16);
+  cursor: pointer;
+  transition:
+    opacity 0.2s ease,
+    background 0.2s ease;
+}
+
+.arrow:hover:not(:disabled) {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #ffffff;
+}
+
+.arrow:disabled {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.arrowPrev {
+  left: calc(var(--s-12) * -1);
+}
+
+.arrowNext {
+  right: calc(var(--s-12) * -1);
+}
+
+/*
+ * Opt-out for rows whose cards are too wide to skim on a phone: below the
+ * breakpoint they stack in one column and nothing scrolls sideways. The
+ * arrows already hide themselves here, and the track reports no overflow.
+ */
+@media (max-width: 767px) {
+  .stacked .viewport {
+    margin: 0;
+  }
+
+  .stacked .track {
+    flex-direction: column;
+    overflow-x: visible;
+    padding: 0;
+  }
+
+  .stacked .track > * {
+    flex: 0 0 auto;
+    width: auto;
+  }
+}
+
+@media (min-width: 768px) {
+  .viewport {
+    margin: 0;
+  }
+
+  .track {
+    padding: 0;
+    scroll-padding-left: 0;
+  }
+
+  .arrow {
+    display: flex;
+    width: 40px;
+    height: 40px;
+  }
+}

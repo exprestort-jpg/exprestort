@@ -25,24 +25,41 @@ export function SiteHeader({
   phone: string;
 }) {
   const [open, setOpen] = useState(false);
+  /*
+   * The drawer has to outlive `open` to play its slide-out, so closing is a
+   * state of its own. The panel unmounts on animationend — under
+   * prefers-reduced-motion the animation is 1ms rather than `none`, precisely
+   * so that event still fires and the drawer cannot get stuck on screen.
+   */
+  const [closing, setClosing] = useState(false);
+  const mounted = open || closing;
   // Read after hydration only: the server has no localStorage, so rendering the
   // real count straight away would mismatch and get wiped by React.
   const hydrated = useCart((state) => state.hydrated);
   const count = useCart((state) => cartCount(state.lines));
 
+  const closeMenu = () => {
+    setOpen(false);
+    setClosing(true);
+  };
+
   useEffect(() => {
-    if (!open) return;
+    if (!mounted) return;
     const previous = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setOpen(false);
+      // The setters are stable, so the effect stays keyed on `mounted` alone.
+      if (event.key === "Escape") {
+        setOpen(false);
+        setClosing(true);
+      }
     };
     window.addEventListener("keydown", onKey);
     return () => {
       document.body.style.overflow = previous;
       window.removeEventListener("keydown", onKey);
     };
-  }, [open]);
+  }, [mounted]);
 
   return (
     <>
@@ -51,7 +68,10 @@ export function SiteHeader({
           <button
             type="button"
             className={styles.iconButton}
-            onClick={() => setOpen(true)}
+            onClick={() => {
+              setClosing(false);
+              setOpen(true);
+            }}
             aria-label="Відкрити меню"
             aria-expanded={open}
           >
@@ -83,18 +103,25 @@ export function SiteHeader({
         </div>
       </header>
 
-      {open ? (
+      {mounted ? (
         <>
           {/* biome-ignore lint/a11y/noStaticElementInteractions: backdrop, Escape and the close button both dismiss */}
           {/* biome-ignore lint/a11y/useKeyWithClickEvents: keyboard users get Escape and the close button */}
-          <div className={styles.menuOverlay} onClick={() => setOpen(false)} />
-          {/* biome-ignore lint/a11y/noStaticElementInteractions: closes the panel when a link inside it is followed */}
+          <div
+            className={`${styles.menuOverlay} ${closing ? styles.menuOverlayClosing : ""}`}
+            onClick={closeMenu}
+          />
           {/* biome-ignore lint/a11y/useKeyWithClickEvents: links handle their own keyboard activation */}
           <nav
-            className={styles.menuPanel}
+            className={`${styles.menuPanel} ${closing ? styles.menuPanelClosing : ""}`}
             aria-label="Головне меню"
+            onAnimationEnd={(event) => {
+              if (event.target === event.currentTarget && closing) {
+                setClosing(false);
+              }
+            }}
             onClick={(event) => {
-              if ((event.target as HTMLElement).closest("a")) setOpen(false);
+              if ((event.target as HTMLElement).closest("a")) closeMenu();
             }}
           >
             <div className={styles.menuTop}>
@@ -102,7 +129,7 @@ export function SiteHeader({
               <button
                 type="button"
                 className={styles.iconButton}
-                onClick={() => setOpen(false)}
+                onClick={closeMenu}
                 aria-label="Закрити меню"
               >
                 <X size={24} strokeWidth={1.75} />

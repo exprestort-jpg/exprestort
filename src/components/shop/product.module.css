@@ -255,7 +255,9 @@
 
 @media (min-width: 768px) {
   .body,
-  .categoryHead {
+  .categoryHead,
+  /* The skeleton stands in for page content, so it has to match its width. */
+  .skeleton {
     max-width: var(--content-max);
     margin: 0 auto;
   }

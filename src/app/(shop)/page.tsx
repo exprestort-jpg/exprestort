@@ -2,7 +2,7 @@ import { ArrowRight, Check, Heart, Star } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Breadcrumbs } from "@/components/shop/breadcrumbs";
-import catalogStyles from "@/components/shop/catalog.module.css";
+import { Carousel } from "@/components/shop/carousel";
 import { CategoryTile } from "@/components/shop/category-tile";
 import styles from "@/components/shop/home.module.css";
 import { ProductRow } from "@/components/shop/product-row";
@@ -85,14 +85,22 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className={styles.sectionTight}>
-        <h2 className="visuallyHidden">Категорії</h2>
-        <div className={catalogStyles.tileGrid}>
-          {categories.map((category) => (
-            <CategoryTile key={category.slug} category={category} />
-          ))}
-        </div>
-      </section>
+      {categories.length > 0 ? (
+        <section className={styles.section}>
+          <div className={styles.sectionHeader}>
+            <h2 className={styles.sectionTitle}>Категорії</h2>
+            <Link href="/catalog" className={styles.sectionLink}>
+              всі категорії
+              <ArrowRight size={14} strokeWidth={2} aria-hidden />
+            </Link>
+          </div>
+          <Carousel label="Категорії" slideWidth="clamp(150px, 44vw, 250px)">
+            {categories.map((category) => (
+              <CategoryTile key={category.slug} category={category} />
+            ))}
+          </Carousel>
+        </section>
+      ) : null}
 
       {popular.length > 0 ? (
         <section className={styles.section}>
@@ -103,11 +111,15 @@ export default async function HomePage() {
               <ArrowRight size={14} strokeWidth={2} aria-hidden />
             </Link>
           </div>
-          <div className={catalogStyles.list}>
+          <Carousel
+            label="Популярне"
+            slideWidth="clamp(250px, 74vw, 380px)"
+            stackOnMobile
+          >
             {popular.map((product) => (
               <ProductRow key={product.slug} product={product} />
             ))}
-          </div>
+          </Carousel>
         </section>
       ) : null}
 
@@ -144,13 +156,11 @@ export default async function HomePage() {
       </section>
 
       {reviews.length > 0 ? (
-        <section
-          className={`${styles.section} ${styles.sectionAlt} ${styles.reviewsSection}`}
-        >
-          <div className={`${styles.sectionHeader} ${styles.reviewsHeader}`}>
+        <section className={`${styles.section} ${styles.sectionAlt}`}>
+          <div className={styles.sectionHeader}>
             <h2 className={styles.sectionTitle}>Відгуки</h2>
           </div>
-          <div className={styles.reviewsScroller}>
+          <Carousel label="Відгуки" slideWidth="clamp(266px, 84vw, 320px)">
             {reviews.map((review) => (
               <article key={review.id} className={styles.review}>
                 <div className={styles.reviewTop}>
@@ -189,7 +199,7 @@ export default async function HomePage() {
                 <p className={styles.reviewQuote}>{review.text}</p>
               </article>
             ))}
-          </div>
+          </Carousel>
         </section>
       ) : null}
 

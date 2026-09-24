@@ -79,10 +79,6 @@
   padding: var(--s-32) var(--gutter);
 }
 
-.sectionTight {
-  padding: var(--s-24) var(--gutter) var(--s-8);
-}
-
 .sectionAlt {
   background: var(--surface-alt);
 }
@@ -92,7 +88,6 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--s-12);
-  margin-bottom: var(--s-12);
 }
 
 .sectionTitle {
@@ -100,6 +95,7 @@
   font-size: 24px;
   font-weight: 600;
   line-height: 1.2;
+  margin-bottom: var(--s-24);
 }
 
 .sectionLink {
@@ -183,49 +179,16 @@
   line-height: 1.5;
 }
 
-/*
- * The row runs edge to edge so cards pass under both screen edges while
- * scrolling. The gutter lives on the scroller, not the section: padding on a
- * scroll container scrolls away with the content, so the first and last cards
- * still sit inset at rest, but nothing is clipped against a fixed padding line
- * mid-scroll. The heading keeps its own gutter.
- */
-.reviewsSection {
-  padding-left: 0;
-  padding-right: 0;
-}
-
-.reviewsHeader {
-  padding-left: var(--gutter);
-  padding-right: var(--gutter);
-}
-
-.reviewsScroller {
-  display: flex;
-  gap: var(--s-12);
-  overflow-x: auto;
-  padding-left: var(--gutter);
-  padding-right: var(--gutter);
-  scroll-snap-type: x mandatory;
-  scrollbar-width: none;
-  scroll-padding-left: var(--gutter);
-}
-
-.reviewsScroller::-webkit-scrollbar {
-  display: none;
-}
-
+/* Card only — width, snapping and edge bleed belong to the carousel. */
 .review {
   display: flex;
   flex-direction: column;
   gap: var(--s-12);
-  width: 266px;
-  flex-shrink: 0;
+  height: 100%;
   padding: var(--s-16);
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--r-md);
-  scroll-snap-align: start;
 }
 
 .reviewTop {
@@ -329,7 +292,7 @@
    * same width as every other section.
    */
   .hero {
-    min-height: 460px;
+    min-height: 560px;
     align-items: center;
     max-width: min(var(--content-max), 100% - var(--gutter) * 2);
     margin: var(--s-24) auto 0;
@@ -359,8 +322,7 @@
     top: var(--s-32);
   }
 
-  .section,
-  .sectionTight {
+  .section {
     max-width: var(--content-max);
     margin: 0 auto;
     padding-left: var(--gutter);
@@ -397,22 +359,6 @@
 
   .trustLabel {
     font-size: 13px;
-  }
-
-  .reviewsSection {
-    padding-left: var(--gutter);
-    padding-right: var(--gutter);
-  }
-
-  .reviewsHeader {
-    padding-left: 0;
-    padding-right: 0;
-  }
-
-  .reviewsScroller {
-    padding-left: 0;
-    padding-right: 0;
-    scroll-padding-left: 0;
   }
 
   .steps {
