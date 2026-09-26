@@ -8,6 +8,7 @@ import { slugify } from "@/lib/slug";
 import { useAdminForm } from "@/lib/use-admin-form";
 import styles from "../_components/admin.module.css";
 import { ImageField } from "../_components/image-field";
+import { useSiteHost } from "../_components/site-host";
 import { saveCategory } from "./actions";
 
 export type CategoryFormValues = {
@@ -45,6 +46,7 @@ export function CategoryForm({ values }: { values: CategoryFormValues }) {
   // Only a brand-new category follows the title; editing an existing slug would
   // break every link already pointing at it.
   const [slugLocked, setSlugLocked] = useState(Boolean(values.id));
+  const siteHost = useSiteHost();
 
   const { errors } = form;
   const titleField = form.field("title");
@@ -96,7 +98,7 @@ export function CategoryForm({ values }: { values: CategoryFormValues }) {
           }}
         />
         <span className={styles.hint}>
-          expresstort.com.ua/catalog/{form.values.slug || "…"}
+          {siteHost}/catalog/{form.values.slug || "…"}
         </span>
         {errors.slug ? (
           <span className={styles.fieldError}>{errors.slug}</span>

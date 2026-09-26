@@ -8,6 +8,7 @@ import { slugify } from "@/lib/slug";
 import { useAdminForm } from "@/lib/use-admin-form";
 import styles from "../_components/admin.module.css";
 import { RichEditor } from "../_components/rich-editor";
+import { useSiteHost } from "../_components/site-host";
 import { savePage } from "./actions";
 
 export type PageFormValues = {
@@ -42,6 +43,7 @@ export function PageForm({ values }: { values: PageFormValues }) {
     state,
   });
   const [slugLocked, setSlugLocked] = useState(Boolean(values.id));
+  const siteHost = useSiteHost();
 
   const { errors } = form;
   const titleField = form.field("title");
@@ -93,7 +95,7 @@ export function PageForm({ values }: { values: PageFormValues }) {
           }}
         />
         <span className={styles.hint}>
-          expresstort.com.ua/{form.values.slug || "…"}
+          {siteHost}/{form.values.slug || "…"}
         </span>
         {errors.slug ? (
           <span className={styles.fieldError}>{errors.slug}</span>

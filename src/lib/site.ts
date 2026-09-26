@@ -12,3 +12,10 @@ export function siteUrl(path = "/"): string {
 
   return new URL(path, base).toString();
 }
+
+/**
+ * Host only, no scheme — for UI that previews a public URL to an admin.
+ */
+export function siteHost(): string {
+  return new URL(siteUrl()).host;
+}

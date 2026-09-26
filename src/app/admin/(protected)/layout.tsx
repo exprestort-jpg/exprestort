@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { requireAdmin } from "@/lib/require-admin";
+import { siteHost } from "@/lib/site";
+import { SiteHostProvider } from "./_components/site-host";
 import { logoutAction } from "./actions";
 import styles from "./layout.module.css";
 
@@ -48,7 +50,9 @@ export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
           </button>
         </form>
       </aside>
-      <main className={styles.content}>{children}</main>
+      <main className={styles.content}>
+        <SiteHostProvider host={siteHost()}>{children}</SiteHostProvider>
+      </main>
     </div>
   );
 }

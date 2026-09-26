@@ -16,6 +16,7 @@ import {
   type GalleryImage,
   ImageGalleryField,
 } from "../_components/image-gallery-field";
+import { useSiteHost } from "../_components/site-host";
 import { saveProduct } from "./actions";
 
 export type VariantValues = {
@@ -95,6 +96,7 @@ export function ProductForm({
     state,
   });
   const [slugLocked, setSlugLocked] = useState(Boolean(values.id));
+  const siteHost = useSiteHost();
   const [variants, setVariants] = useState<VariantValues[]>(values.variants);
   const [sections, setSections] = useState<SectionValues[]>(values.sections);
   const [isActive, setIsActive] = useState(values.isActive);
@@ -175,7 +177,7 @@ export function ProductForm({
           }}
         />
         <span className={styles.hint}>
-          expresstort.com.ua/product/{form.values.slug || "…"}
+          {siteHost}/product/{form.values.slug || "…"}
         </span>
         {errors.slug ? (
           <span className={styles.fieldError}>{errors.slug}</span>
