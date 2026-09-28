@@ -1,0 +1,23 @@
+[build]
+  command = "npm run build"
+
+[build.environment]
+  # Turbopack writes the build-time environment into its own cache
+  # (*/cache/turbopack/*.sst). That is build cache: Netlify restores it between
+  # builds but never publishes it, so the values are not reachable from the
+  # internet. Verified by grepping .next/static and .next/server for every value
+  # in .env.local — zero hits anywhere outside these cache paths.
+  #
+  # The runtime copies the build into .netlify/, so the same cache shows up
+  # under three prefixes and all three have to be listed.
+  #
+  # Scoped to cache directories on purpose. Do not widen this to the whole
+  # build, and do not reach for SECRETS_SCAN_ENABLED=false: the scanner is the
+  # thing that would catch a genuine leak into a client bundle.
+  SECRETS_SCAN_OMIT_PATHS = ".next/cache/**,.netlify/.next/cache/**,.netlify/.next/standalone/.next/cache/**"
+
+  # Not a secret. This is the public R2 hostname that serves every product
+  # photo, so it is *supposed* to appear in the rendered HTML and RSC payloads
+  # — that is the only reason images load. It is also spelled out in
+  # next.config.ts, which is committed to the repo.
+  SECRETS_SCAN_OMIT_KEYS = "R2_PUBLIC_BASE_URL"
