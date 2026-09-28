@@ -2,6 +2,12 @@
   command = "npm run build"
 
 [build.environment]
+  # Netlify defaults new sites to Node 24; local development and the production
+  # build that gets verified before deploying both run 22.22.2. Pinned purely so
+  # the deployed runtime matches what was tested — Node 24 was measured and is
+  # *not* the cause of any bug here. Next 16.3.6 requires >=20.9.0.
+  NODE_VERSION = "22.22.2"
+
   # Turbopack writes the build-time environment into its own cache
   # (*/cache/turbopack/*.sst). That is build cache: Netlify restores it between
   # builds but never publishes it, so the values are not reachable from the
