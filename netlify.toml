@@ -16,8 +16,16 @@
   # thing that would catch a genuine leak into a client bundle.
   SECRETS_SCAN_OMIT_PATHS = ".next/cache/**,.netlify/.next/cache/**,.netlify/.next/standalone/.next/cache/**"
 
-  # Not a secret. This is the public R2 hostname that serves every product
-  # photo, so it is *supposed* to appear in the rendered HTML and RSC payloads
-  # — that is the only reason images load. It is also spelled out in
-  # next.config.ts, which is committed to the repo.
-  SECRETS_SCAN_OMIT_KEYS = "R2_PUBLIC_BASE_URL"
+  # Neither of these is a credential.
+  #
+  # R2_PUBLIC_BASE_URL is the public hostname serving every product photo, so it
+  # is *supposed* to appear in the rendered HTML and RSC payloads — that is the
+  # only reason images load. It is also spelled out in next.config.ts, which is
+  # committed to the repo.
+  #
+  # R2_BUCKET is "exprestort", which is also the site's own subdomain. The
+  # scanner matches literal substrings, so it flags every sitemap entry, OG tag
+  # and canonical URL on the site. Reading the bucket name buys an attacker
+  # nothing: access needs R2_ACCESS_KEY_ID and R2_SECRET_ACCESS_KEY, and those
+  # are still scanned.
+  SECRETS_SCAN_OMIT_KEYS = "R2_PUBLIC_BASE_URL,R2_BUCKET"
