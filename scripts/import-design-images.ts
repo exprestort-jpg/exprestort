@@ -1,8 +1,9 @@
 import { readFile } from "node:fs/promises";
-import { put } from "@vercel/blob";
+import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
 import { categories, productImages, products, siteSettings } from "@/db/schema";
+import { bucket, publicUrl, r2 } from "@/lib/r2";
 
 /**
  * Fills the shop with the artwork from the Pencil design so the storefront can
@@ -77,27 +78,46 @@ const PRODUCT_PHOTOS: Record<
 const HERO_LOCAL = "generated-1790146876113.png";
 const ABOUT_REMOTE = unsplash("1521884349539-bb44f66a7a40");
 
+/**
+ * Keys are deliberately stable here, unlike the random ones the admin panel
+ * mints: this script always reseeds from scratch, so overwriting in place beats
+ * leaving a trail of orphans behind for the pruner to find.
+ *
+ * The flip side is that a reseed replaces the bytes behind a URL that edge
+ * caches were told to keep for a year. Purge the cache if a stale photo shows.
+ */
+async function putObject(
+  key: string,
+  body: Buffer,
+  contentType: string,
+): Promise<string> {
+  await r2().send(
+    new PutObjectCommand({
+      Bucket: bucket(),
+      Key: key,
+      Body: body,
+      ContentType: contentType,
+      CacheControl: "public, max-age=31536000, immutable",
+    }),
+  );
+  return publicUrl(key);
+}
+
 async function uploadRemote(url: string, name: string): Promise<string> {
   const response = await fetch(url);
   if (!response.ok)
     throw new Error(`Download failed (${response.status}): ${url}`);
   const body = Buffer.from(await response.arrayBuffer());
-  const blob = await put(name, body, {
-    access: "public",
-    addRandomSuffix: true,
-    contentType: response.headers.get("content-type") ?? "image/jpeg",
-  });
-  return blob.url;
+  return putObject(
+    name,
+    body,
+    response.headers.get("content-type") ?? "image/jpeg",
+  );
 }
 
 async function uploadLocal(filename: string, name: string): Promise<string> {
   const body = await readFile(`${PENCIL_IMAGES}/${filename}`);
-  const blob = await put(name, body, {
-    access: "public",
-    addRandomSuffix: true,
-    contentType: "image/png",
-  });
-  return blob.url;
+  return putObject(name, body, "image/png");
 }
 
 async function main() {

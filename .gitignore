@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# migration manifest (rollback map for the R2 move)
+/scripts/.migration/

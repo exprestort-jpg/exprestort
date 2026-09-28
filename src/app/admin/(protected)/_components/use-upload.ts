@@ -1,12 +1,13 @@
 "use client";
 
-import { upload } from "@vercel/blob/client";
 import { useState } from "react";
 
 const MAX_BYTES = 8 * 1024 * 1024;
 const ALLOWED = ["image/jpeg", "image/png", "image/webp", "image/avif"];
 
-export function useUpload() {
+type Presigned = { key: string; uploadUrl: string; publicUrl: string };
+
+export function useUpload(scope = "uploads") {
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -28,15 +29,46 @@ export function useUpload() {
 
     setPending(true);
     try {
-      const uploaded = await Promise.all(
-        files.map((file) =>
-          upload(file.name, file, {
-            access: "public",
-            handleUploadUrl: "/api/admin/upload",
-          }),
-        ),
+      // One round trip for the whole batch: a gallery drop of eight photos
+      // should not mean eight separate authorisation checks.
+      const response = await fetch("/api/admin/upload", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          scope,
+          files: files.map((file) => ({
+            filename: file.name,
+            contentType: file.type,
+            size: file.size,
+          })),
+        }),
+      });
+
+      if (!response.ok) {
+        const body = (await response.json().catch(() => null)) as {
+          error?: string;
+        } | null;
+        throw new Error(body?.error ?? "Не вдалося підготувати завантаження.");
+      }
+
+      const { uploads } = (await response.json()) as { uploads: Presigned[] };
+
+      await Promise.all(
+        uploads.map(async (target, index) => {
+          // The content type was signed along with the URL, so it has to be
+          // sent back exactly: anything else and the store answers 403.
+          const put = await fetch(target.uploadUrl, {
+            method: "PUT",
+            body: files[index],
+            headers: { "Content-Type": files[index].type },
+          });
+          if (!put.ok) {
+            throw new Error(`Сховище відхилило файл (${put.status}).`);
+          }
+        }),
       );
-      return uploaded.map((blob) => blob.url);
+
+      return uploads.map((target) => target.publicUrl);
     } catch (cause) {
       setError(
         cause instanceof Error ? cause.message : "Не вдалося завантажити файл.",
