@@ -5,7 +5,12 @@ import { useState } from "react";
 const MAX_BYTES = 8 * 1024 * 1024;
 const ALLOWED = ["image/jpeg", "image/png", "image/webp", "image/avif"];
 
-type Presigned = { key: string; uploadUrl: string; publicUrl: string };
+type Presigned = {
+  key: string;
+  uploadUrl: string;
+  publicUrl: string;
+  cacheControl: string;
+};
 
 export function useUpload(scope = "uploads") {
   const [pending, setPending] = useState(false);
@@ -57,10 +62,17 @@ export function useUpload(scope = "uploads") {
         uploads.map(async (target, index) => {
           // The content type was signed along with the URL, so it has to be
           // sent back exactly: anything else and the store answers 403.
+          //
+          // Cache-Control is not signed, but the store keeps whatever the PUT
+          // carries — so the header the server chose has to be echoed here or
+          // the object is stored uncacheable.
           const put = await fetch(target.uploadUrl, {
             method: "PUT",
             body: files[index],
-            headers: { "Content-Type": files[index].type },
+            headers: {
+              "Content-Type": files[index].type,
+              "Cache-Control": target.cacheControl,
+            },
           });
           if (!put.ok) {
             throw new Error(`Сховище відхилило файл (${put.status}).`);

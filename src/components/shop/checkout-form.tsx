@@ -195,6 +195,7 @@ export function CheckoutForm() {
         <input
           id="customerName"
           name="customerName"
+          autoComplete="name"
           className={styles.input}
           value={customerName}
           onChange={(event) => {
@@ -220,6 +221,7 @@ export function CheckoutForm() {
           name="phone"
           type="tel"
           inputMode="tel"
+          autoComplete="tel"
           placeholder="067 000 00 00"
           className={styles.input}
           value={phone}

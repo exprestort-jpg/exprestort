@@ -16,6 +16,16 @@ const MAX_FILES = 20;
 // outlast a slow round trip, not the upload itself.
 const EXPIRES_IN_SECONDS = 300;
 
+/**
+ * Keys carry a random segment and are never overwritten, so a stored object is
+ * immutable and can be cached for as long as a browser or CDN likes.
+ *
+ * This has to travel to the client and come back as a request header: R2 takes
+ * the value from the PUT itself, and `CacheControl` on the command below is not
+ * part of a presigned signature, so setting it there alone does nothing.
+ */
+const CACHE_CONTROL = "public, max-age=31536000, immutable";
+
 const bodySchema = z.object({
   scope: z.enum(SCOPES).default("uploads"),
   files: z
@@ -65,6 +75,7 @@ export async function POST(request: NextRequest): Promise<Response> {
             Key: key,
             ContentType: file.contentType,
             ContentLength: file.size,
+            CacheControl: CACHE_CONTROL,
           }),
           {
             expiresIn: EXPIRES_IN_SECONDS,
@@ -75,7 +86,12 @@ export async function POST(request: NextRequest): Promise<Response> {
           },
         );
 
-        return { key, uploadUrl, publicUrl: publicUrl(key) };
+        return {
+          key,
+          uploadUrl,
+          publicUrl: publicUrl(key),
+          cacheControl: CACHE_CONTROL,
+        };
       }),
     );
 

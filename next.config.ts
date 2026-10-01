@@ -25,6 +25,35 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+
+  /**
+   * Set here rather than in netlify.toml so they follow the app if it moves
+   * hosts. The host may add its own — duplicates are harmless.
+   *
+   * No Content-Security-Policy yet: a useful one needs a per-request nonce for
+   * Next's inline bootstrap scripts, and shipping a guessed policy to a live
+   * shop breaks checkout rather than hardening it. Worth doing properly, as its
+   * own change.
+   */
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: [
+          { key: "X-Frame-Options", value: "DENY" },
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          {
+            key: "Referrer-Policy",
+            value: "strict-origin-when-cross-origin",
+          },
+          {
+            key: "Permissions-Policy",
+            value: "camera=(), microphone=(), geolocation=(), payment=()",
+          },
+        ],
+      },
+    ];
+  },
 };
 
 export default nextConfig;
