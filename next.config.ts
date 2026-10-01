@@ -27,7 +27,7 @@ const nextConfig: NextConfig = {
   },
 
   /**
-   * Set here rather than in netlify.toml so they follow the app if it moves
+   * Set here in app config so they follow the app if it moves
    * hosts. The host may add its own — duplicates are harmless.
    *
    * No Content-Security-Policy yet: a useful one needs a per-request nonce for
