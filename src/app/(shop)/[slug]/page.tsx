@@ -4,7 +4,12 @@ import { Suspense } from "react";
 import { Breadcrumbs } from "@/components/shop/breadcrumbs";
 import { PageSkeleton } from "@/components/shop/page-skeleton";
 import styles from "@/components/shop/product.module.css";
-import { getPageBySlug } from "@/lib/queries";
+import { getAllPageSlugs, getPageBySlug } from "@/lib/queries";
+
+export async function generateStaticParams() {
+  const slugs = await getAllPageSlugs();
+  return slugs.map((row) => ({ slug: row.slug }));
+}
 
 export async function generateMetadata({
   params,
@@ -44,13 +49,8 @@ async function StaticPageContent({
 
 /**
  * `params` is awaited inside the boundary rather than at the top level, so the
- * shell still prerenders and a page added in the admin after the last build
- * gets a fast first paint too.
- *
- * Deliberately no `generateStaticParams`. Fully prerendering each slug made
- * Netlify serve a postponed PPR shell it then never resumed, so client-side
- * navigation died with React #412 ("Connection closed") while a direct page
- * load was fine. See the same note on /product/[slug].
+ * shell still prerenders for slugs generateStaticParams did not list — a
+ * category added in the admin after the last build gets a fast first paint too.
  */
 export default function StaticPage({ params }: PageProps<"/[slug]">) {
   return (
